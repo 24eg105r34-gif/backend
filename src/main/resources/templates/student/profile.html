@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: student-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Personal Student Profile')}"></div>
+
+        <main class="content-body">
+            <div class="form-panel" style="max-width: 800px; margin: 0 auto;">
+                <div style="display: flex; gap: 1.5rem; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+                    <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--bg-secondary); border: 2px solid var(--border-focus); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700;">
+                        ST
+                    </div>
+                    <div>
+                        <h2 style="font-size: 1.4rem;" th:text="${student.name}">Rahul Verma</h2>
+                        <span class="badge badge-muted" th:text="${student.studentId}">STU-2026-001</span>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div>
+                        <span class="metric-label">Official Email</span>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-top: 0.25rem;" th:text="${student.email}">rahul@campus.edu</div>
+                    </div>
+                    <div>
+                        <span class="metric-label">Contact Number</span>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-top: 0.25rem;" th:text="${student.phone != null ? student.phone : 'Not provided'}">+91 91234 56710</div>
+                    </div>
+                    <div>
+                        <span class="metric-label">Academic Department</span>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-top: 0.25rem;" th:text="${student.department.departmentName + ' (' + student.department.departmentCode + ')'}">CSE</div>
+                    </div>
+                    <div>
+                        <span class="metric-label">Year & Semester</span>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-top: 0.25rem;" th:text="'Year ' + ${student.year} + ' | Semester ' + ${student.semester}">Year 3 | Sem 5</div>
+                    </div>
+                    <div>
+                        <span class="metric-label">Class Section</span>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-top: 0.25rem;" th:text="'Section ' + ${student.section}">Section A</div>
+                    </div>
+                    <div>
+                        <span class="metric-label">Cumulative Attendance</span>
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-top: 0.25rem;"
+                             th:style="${overallAttendance < 75.0 ? 'color: var(--danger);' : 'color: var(--success);'}"
+                             th:text="${overallAttendance + '%'}">86%</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

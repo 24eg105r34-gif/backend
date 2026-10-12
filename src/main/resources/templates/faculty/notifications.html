@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Notifications | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: faculty-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Instructor & Academic Alerts')}"></div>
+
+        <main class="content-body">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Faculty Notification Feed</h2>
+                    <form th:action="@{/faculty/notifications/read-all}" method="post">
+                        <button type="submit" class="btn btn-outline btn-sm">Mark All as Read</button>
+                    </form>
+                </div>
+
+                <div style="padding: 1rem 1.5rem;">
+                    <div th:if="${#lists.isEmpty(notifications)}" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                        No notifications found.
+                    </div>
+
+                    <div th:each="n : ${notifications}" style="border-bottom: 1px solid var(--border-color); padding: 1rem 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                                <span class="badge"
+                                      th:classappend="${n.type.name() == 'ASSIGNMENT' ? 'badge-info' : (n.type.name() == 'ATTENDANCE_WARNING' ? 'badge-danger' : 'badge-warning')}"
+                                      th:text="${n.type}">ASSIGNMENT</span>
+                                <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);"
+                                      th:text="${#temporals.format(n.createdAt, 'dd MMM yyyy, hh:mm a')}">Date</span>
+                                <span th:if="${!n.read}" class="badge badge-warning" style="font-size: 0.7rem; padding: 0.15rem 0.4rem;">NEW</span>
+                            </div>
+                            <strong style="font-size: 0.95rem;" th:text="${n.title}">Notification Title</strong>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;" th:text="${n.message}">Message</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <a th:if="${n.linkUrl != null}" th:href="${n.linkUrl}" class="btn btn-primary btn-sm">View</a>
+                            <form th:if="${!n.read}" th:action="@{'/faculty/notifications/' + ${n.id} + '/read'}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-outline btn-sm" style="font-size: 0.75rem;">Mark Read</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

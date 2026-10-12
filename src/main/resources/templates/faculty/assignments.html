@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Assignments | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: faculty-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Course Assignments & Grading')}"></div>
+
+        <main class="content-body">
+            <div th:if="${successMessage}" class="alert-banner alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-banner alert-error" th:text="${errorMessage}"></div>
+
+            <!-- Create Assignment Form -->
+            <div class="form-panel">
+                <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Create New Assignment</h2>
+                <form th:action="@{/faculty/assignments/create}" method="post">
+                    <div class="form-grid">
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label class="form-label">Assignment Title</label>
+                            <input type="text" name="title" class="form-control" placeholder="e.g. Memory Management & Paging Simulation" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Subject</label>
+                            <select name="subjectId" class="form-control" required>
+                                <option th:each="s : ${subjects}" th:value="${s.id}" th:text="${s.subjectCode + ' - ' + s.subjectName}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Submission Deadline</label>
+                            <input type="datetime-local" name="deadline" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Maximum Marks</label>
+                            <input type="number" step="1" name="maxMarks" class="form-control" value="25" min="1" required>
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label class="form-label">Assignment Problem Statement & Guidelines</label>
+                            <textarea name="description" class="form-control" rows="4" placeholder="Detail the submission instructions, deliverables, and format..." required></textarea>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.25rem;">
+                        <button type="submit" class="btn btn-primary">Publish Assignment</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Assignments Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Active Course Assignments</h2>
+                </div>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Assignment Title</th>
+                            <th>Deadline</th>
+                            <th>Max Marks</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(assignments)}">
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">No assignments published yet.</td>
+                        </tr>
+                        <tr th:each="a : ${assignments}">
+                            <td><span class="badge badge-muted" th:text="${a.subject.subjectCode}">CS501</span></td>
+                            <td>
+                                <strong th:text="${a.title}">Process Scheduling</strong>
+                                <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;" th:text="${a.description}">Description...</p>
+                            </td>
+                            <td style="font-family: var(--font-mono);" th:text="${#temporals.format(a.deadline, 'dd MMM yyyy, hh:mm a')}">15 Oct 2026</td>
+                            <td th:text="${a.maxMarks}">25.0</td>
+                            <td>
+                                <a th:href="@{'/faculty/assignments/' + ${a.id} + '/submissions'}" class="btn btn-primary btn-sm">Review Submissions</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

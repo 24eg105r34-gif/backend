@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: smart-campus-management-system
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /login
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: dev
+      - key: CAMPUS_SEED_DEMODATA
+        value: true
+      - key: CAMPUS_ATTENDANCE_THRESHOLD
+        value: 75.0

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Management | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: admin-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Faculty & Instructors Directory')}"></div>
+
+        <main class="content-body">
+            <div th:if="${successMessage}" class="alert-banner alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-banner alert-error" th:text="${errorMessage}"></div>
+
+            <!-- Add Faculty Form -->
+            <div class="form-panel">
+                <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Add New Faculty Member</h2>
+                <form th:action="@{/admin/faculty/add}" method="post">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g. Dr. Ramesh Gupta" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Faculty Campus ID</label>
+                            <input type="text" name="facultyId" class="form-control" placeholder="e.g. FAC-CSE-04" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Official Email</label>
+                            <input type="email" name="email" class="form-control" placeholder="ramesh.cse@campus.edu" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone</label>
+                            <input type="text" name="phone" class="form-control" placeholder="+91 98765 11111">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Department</label>
+                            <select name="departmentId" class="form-control" required>
+                                <option value="">Select Department</option>
+                                <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.departmentCode + ' - ' + d.departmentName}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Designation</label>
+                            <input type="text" name="designation" class="form-control" placeholder="e.g. Associate Professor" required>
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label class="form-label">Specialization / Research Area</label>
+                            <input type="text" name="specialization" class="form-control" placeholder="e.g. Artificial Intelligence & Deep Learning">
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.25rem;">
+                        <button type="submit" class="btn btn-primary">Add Faculty</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search Toolbar -->
+            <div class="form-panel" style="padding: 1.25rem;">
+                <form th:action="@{/admin/faculty}" method="get" style="display: flex; gap: 1rem; align-items: flex-end;">
+                    <div class="form-group" style="flex-grow: 1; max-width: 400px;">
+                        <label class="form-label">Search Faculty</label>
+                        <input type="text" name="search" th:value="${searchQuery}" class="form-control" placeholder="Name, ID or Email">
+                    </div>
+                    <button type="submit" class="btn btn-outline">Search</button>
+                    <a href="/admin/faculty" class="btn btn-outline">Reset</a>
+                </form>
+            </div>
+
+            <!-- Faculty Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Faculty List (<span th:text="${#lists.size(facultyList)}">0</span>)</h2>
+                </div>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Faculty ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Designation</th>
+                            <th>Specialization</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="f : ${facultyList}">
+                            <td style="font-family: var(--font-mono); font-weight: 600;" th:text="${f.facultyId}">FAC-01</td>
+                            <td th:text="${f.name}">Prof. Alok Sharma</td>
+                            <td th:text="${f.email}" style="color: var(--text-secondary);">prof.sharma@campus.edu</td>
+                            <td><span class="badge badge-muted" th:text="${f.department.departmentCode}">CSE</span></td>
+                            <td th:text="${f.designation}">Associate Professor</td>
+                            <td th:text="${f.specialization}">Cloud Computing</td>
+                            <td>
+                                <form th:action="@{'/admin/faculty/delete/' + ${f.id}}" method="post" style="display:inline;" onsubmit="return confirm('Confirm removing faculty member?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

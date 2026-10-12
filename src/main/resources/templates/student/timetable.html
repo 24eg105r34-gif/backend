@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Timetable | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: student-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Weekly Lecture Schedule')}"></div>
+
+        <main class="content-body">
+            <div class="form-panel" style="padding: 1.25rem; margin-bottom: 2rem;">
+                <span class="badge badge-muted" th:text="${student.department.departmentCode + ' | Year ' + student.year + ' | Section ' + student.section}">CSE Y3 Sec-A</span>
+                <h2 style="font-size: 1.1rem; margin-top: 0.35rem;">Semester 5 Class Schedule</h2>
+            </div>
+
+            <div class="timetable-grid">
+                <div th:each="entry : ${timetableMap}" class="day-column">
+                    <div class="day-header" th:text="${entry.key}">MONDAY</div>
+
+                    <div th:if="${#lists.isEmpty(entry.value)}" style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 1.5rem 0;">
+                        No Scheduled Lectures
+                    </div>
+
+                    <div th:each="slot : ${entry.value}" class="slot-card">
+                        <div class="slot-time" th:text="${slot.startTime + ' - ' + slot.endTime}">09:00 - 10:00</div>
+                        <div class="slot-subject" th:text="${slot.subject.subjectCode + ': ' + slot.subject.subjectName}">Operating Systems</div>
+                        <div class="slot-meta" th:text="'Room: ' + ${slot.room} + ' | ' + ${slot.faculty.name}">LH-201 | Prof. Sharma</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

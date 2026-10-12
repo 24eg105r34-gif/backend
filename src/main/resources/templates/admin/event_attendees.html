@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Attendee Roster | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: admin-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Event Attendee Roster')}"></div>
+
+        <main class="content-body">
+            <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                <a href="/admin/events" class="btn btn-outline">&larr; Back to Campus Events</a>
+                <span class="badge badge-info" th:text="${#lists.size(registrations) + ' / ' + event.capacity + ' Confirmed Registrations'}">13 / 100 Confirmed</span>
+            </div>
+
+            <!-- Event Summary Card -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title" th:text="${event.title}">Event Title</h2>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;" th:text="${event.description}">Description</p>
+                    </div>
+                    <span class="badge" th:classappend="${event.isFull() ? 'badge-danger' : 'badge-success'}"
+                          th:text="${event.isFull() ? 'Capacity Reached' : 'Registrations Active'}">Active</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.875rem;">
+                    <div><strong>Date & Time:</strong> <span th:text="${#temporals.format(event.eventDate, 'dd MMMM yyyy') + ' (' + event.startTime + ' - ' + event.endTime + ')'}">Date</span></div>
+                    <div><strong>Location:</strong> <span th:text="${event.location}">Main Auditorium</span></div>
+                    <div><strong>Organizer:</strong> <span th:text="${event.organizer}">CSE Dept</span></div>
+                    <div><strong>Deadline:</strong> <span th:text="${event.registrationDeadline}">Deadline</span></div>
+                </div>
+            </div>
+
+            <!-- Registrations Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 class="table-title">Registered Students (<span th:text="${#lists.size(registrations)}">0</span>)</h3>
+                </div>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student ID</th>
+                            <th>Student Name</th>
+                            <th>Department</th>
+                            <th>Email Address</th>
+                            <th>Registered Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(registrations)}">
+                            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No students have registered for this event yet.</td>
+                        </tr>
+                        <tr th:each="reg, iter : ${registrations}">
+                            <td style="font-family: var(--font-mono); color: var(--text-muted);" th:text="${iter.count}">1</td>
+                            <td style="font-family: var(--font-mono); font-weight: 700;" th:text="${reg.student.studentId}">STU-2026-001</td>
+                            <td><strong th:text="${reg.student.name}">Student Name</strong></td>
+                            <td><span class="badge badge-muted" th:text="${reg.student.department.departmentCode}">CSE</span></td>
+                            <td style="font-family: var(--font-mono); font-size: 0.85rem;" th:text="${reg.student.email}">student@campus.edu</td>
+                            <td style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary);"
+                                th:text="${#temporals.format(reg.registrationDate, 'dd MMM yyyy, hh:mm a')}">Date</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

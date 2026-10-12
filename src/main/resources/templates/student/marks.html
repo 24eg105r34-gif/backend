@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Performance & Marks | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: student-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Assessment Grades & Marksheet')}"></div>
+
+        <main class="content-body">
+            <!-- Academic Summary Metric -->
+            <section class="metrics-row">
+                <div class="metric-card">
+                    <span class="metric-label">Cumulative Performance Index</span>
+                    <div class="metric-value" style="color: var(--accent-white);" th:text="${academicAverage + '%'}">88.3%</div>
+                    <span class="metric-caption">Aggregate Continuous Evaluation Score</span>
+                </div>
+            </section>
+
+            <!-- Marksheet Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Course Assessment Marksheet</h2>
+                </div>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Assessment Type</th>
+                            <th>Maximum Marks</th>
+                            <th>Marks Obtained</th>
+                            <th>Percentage</th>
+                            <th>Faculty Evaluator</th>
+                            <th>Instructor Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(marksList)}">
+                            <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No evaluation marks published yet for your courses.</td>
+                        </tr>
+                        <tr th:each="m : ${marksList}">
+                            <td>
+                                <strong th:text="${m.subject.subjectCode}">CS501</strong><br>
+                                <small style="color: var(--text-muted);" th:text="${m.subject.subjectName}">Operating Systems</small>
+                            </td>
+                            <td><span class="badge badge-muted" th:text="${m.assessmentType}">MIDTERM</span></td>
+                            <td th:text="${m.maxMarks}">50.0</td>
+                            <td><strong th:text="${m.obtainedMarks}">44.0</strong></td>
+                            <td>
+                                <strong th:text="${m.percentage + '%'}"
+                                        th:style="${m.percentage >= 75.0 ? 'color: var(--success);' : (m.percentage >= 50.0 ? 'color: var(--warning);' : 'color: var(--danger);')}">88%</strong>
+                            </td>
+                            <td th:text="${m.faculty.name}">Prof. Alok Sharma</td>
+                            <td style="color: var(--text-secondary); font-size: 0.8rem;" th:text="${m.remarks != null ? m.remarks : '-'}">Well done</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

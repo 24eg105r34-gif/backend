@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Student Marks | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: faculty-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Academic Assessment & Marks Entry')}"></div>
+
+        <main class="content-body">
+            <div th:if="${successMessage}" class="alert-banner alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-banner alert-error" th:text="${errorMessage}"></div>
+
+            <!-- Subject Selector -->
+            <div class="form-panel" style="padding: 1.25rem;">
+                <form th:action="@{/faculty/marks}" method="get" style="display: flex; gap: 1rem; align-items: flex-end;">
+                    <div class="form-group" style="min-width: 300px;">
+                        <label class="form-label">Select Subject</label>
+                        <select name="subjectId" class="form-control" onchange="this.form.submit()">
+                            <option th:each="s : ${subjects}" th:value="${s.id}" th:text="${s.subjectCode + ' - ' + s.subjectName}"
+                                    th:selected="${selectedSubject != null && s.id == selectedSubject.id}"></option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-outline">Load Course</button>
+                </form>
+            </div>
+
+            <!-- Enter Mark Form -->
+            <div class="form-panel" th:if="${selectedSubject != null}">
+                <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Record Assessment Marks</h2>
+                <form th:action="@{/faculty/marks/save}" method="post">
+                    <input type="hidden" name="subjectId" th:value="${selectedSubject.id}">
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Student</label>
+                            <select name="studentId" class="form-control" required>
+                                <option value="">Select Student</option>
+                                <option th:each="st : ${students}" th:value="${st.id}" th:text="${st.name + ' (' + st.studentId + ')'}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Assessment Type</label>
+                            <select name="assessmentType" class="form-control" required>
+                                <option th:each="type : ${assessmentTypes}" th:value="${type}" th:text="${type}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Maximum Marks (Max)</label>
+                            <input type="number" step="0.5" name="maxMarks" id="maxMarks" class="form-control" value="50.0" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Obtained Marks</label>
+                            <input type="number" step="0.5" name="obtainedMarks" id="obtainedMarks" class="form-control" min="0" placeholder="e.g. 42.5" required>
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label class="form-label">Performance Remarks (Optional)</label>
+                            <input type="text" name="remarks" class="form-control" placeholder="e.g. Excellent query optimization skills">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1.25rem;">
+                        <button type="submit" class="btn btn-primary" id="save-marks-btn">Save Marks Record</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Existing Recorded Marks Table -->
+            <div class="table-container" th:if="${selectedSubject != null}">
+                <div class="table-header">
+                    <h2 class="table-title">Recorded Assessment Marksheet (<span th:text="${#lists.size(marksList)}">0</span>)</h2>
+                </div>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Student Name</th>
+                            <th>Assessment Type</th>
+                            <th>Max Marks</th>
+                            <th>Obtained Marks</th>
+                            <th>Percentage</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(marksList)}">
+                            <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No marks entered yet for this course.</td>
+                        </tr>
+                        <tr th:each="m : ${marksList}">
+                            <td style="font-family: var(--font-mono); font-weight: 600;" th:text="${m.student.studentId}">STU-001</td>
+                            <td th:text="${m.student.name}">Rahul Verma</td>
+                            <td><span class="badge badge-muted" th:text="${m.assessmentType}">MIDTERM</span></td>
+                            <td th:text="${m.maxMarks}">50.0</td>
+                            <td><strong th:text="${m.obtainedMarks}">44.0</strong></td>
+                            <td>
+                                <strong th:text="${m.percentage + '%'}"
+                                        th:style="${m.percentage >= 75.0 ? 'color: var(--success);' : (m.percentage >= 50.0 ? 'color: var(--warning);' : 'color: var(--danger);')}">88%</strong>
+                            </td>
+                            <td style="color: var(--text-secondary); font-size: 0.8rem;" th:text="${m.remarks != null ? m.remarks : '-'}">Remarks</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    const max = parseFloat(document.getElementById('maxMarks').value);
+    const obt = parseFloat(document.getElementById('obtainedMarks').value);
+    if (obt > max) {
+        alert('Obtained marks (' + obt + ') cannot exceed maximum marks (' + max + ')!');
+        e.preventDefault();
+    }
+});
+</script>
+</body>
+</html>

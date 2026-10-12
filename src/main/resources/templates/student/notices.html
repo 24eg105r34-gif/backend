@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Notices | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: student-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Campus Notice Board')}"></div>
+
+        <main class="content-body">
+            <!-- Filter Bar -->
+            <div class="form-panel" style="padding: 1rem 1.25rem; margin-bottom: 2rem;">
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                    <span style="font-size: 0.85rem; color: var(--text-muted); margin-right: 0.5rem;">Filter Category:</span>
+                    <a href="/student/notices" class="btn btn-sm" th:classappend="${selectedCategory == null} ? 'btn-primary' : 'btn-outline'">All Notices</a>
+                    <a th:each="c : ${categories}" th:href="@{'/student/notices?category=' + ${c}}" class="btn btn-sm"
+                       th:classappend="${selectedCategory == c} ? 'btn-primary' : 'btn-outline'" th:text="${c}">Academic</a>
+                </div>
+            </div>
+
+            <!-- Notices Cards -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Official Circulars (<span th:text="${#lists.size(notices)}">0</span>)</h2>
+                </div>
+                <div style="padding: 1rem 1.5rem;">
+                    <div th:if="${#lists.isEmpty(notices)}" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                        No notices in this category.
+                    </div>
+                    <div th:each="n : ${notices}" style="border-bottom: 1px solid var(--border-color); padding: 1.25rem 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span class="badge"
+                                  th:classappend="${n.category.name() == 'Emergency' ? 'badge-danger' : (n.category.name() == 'Examination' ? 'badge-warning' : 'badge-info')}"
+                                  th:text="${n.category}">Examination</span>
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);"
+                                  th:text="${#temporals.format(n.publishedDate, 'dd MMM yyyy')}">2026-10-01</span>
+                        </div>
+                        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;" th:text="${n.title}">Notice Title</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;" th:text="${n.description}">Notice Body text...</p>
+                        <div style="margin-top: 0.75rem; font-size: 0.775rem; color: var(--text-muted);" th:text="'Issued by: ' + ${n.createdBy}">Dean</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

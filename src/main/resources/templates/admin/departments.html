@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department Management | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: admin-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Academic Departments')}"></div>
+
+        <main class="content-body">
+            <div th:if="${successMessage}" class="alert-banner alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-banner alert-error" th:text="${errorMessage}"></div>
+
+            <!-- Create Department Form -->
+            <div class="form-panel">
+                <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Create Academic Department</h2>
+                <form th:action="@{/admin/departments/add}" method="post">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Department Code (e.g. CSE, CIVIL, AI)</label>
+                            <input type="text" name="departmentCode" class="form-control" placeholder="e.g. CIVIL" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Department Full Name</label>
+                            <input type="text" name="departmentName" class="form-control" placeholder="e.g. Civil Engineering" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Head of Department (HOD)</label>
+                            <input type="text" name="hodName" class="form-control" placeholder="e.g. Dr. K. Radhakrishnan" required>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.25rem;">
+                        <button type="submit" class="btn btn-primary">Create Department</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Departments Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Departments List</h2>
+                </div>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Dept Code</th>
+                            <th>Department Name</th>
+                            <th>Head of Department</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="d : ${departments}">
+                            <td style="font-family: var(--font-mono); font-weight: 700;" th:text="${d.departmentCode}">CSE</td>
+                            <td th:text="${d.departmentName}">Computer Science & Engineering</td>
+                            <td th:text="${d.hodName}">Dr. Arvind Raman</td>
+                            <td>
+                                <form th:action="@{'/admin/departments/delete/' + ${d.id}}" method="post" style="display:inline;" onsubmit="return confirm('Confirm deleting department?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

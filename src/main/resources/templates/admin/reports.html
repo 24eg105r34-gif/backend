@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Operational Reports | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: admin-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Comprehensive Institutional Analytics')}"></div>
+
+        <main class="content-body">
+            <section class="metrics-row">
+                <div class="metric-card">
+                    <span class="metric-label">Institutional Status</span>
+                    <div class="metric-value" style="color: var(--tag-online);">ACCREDITED</div>
+                    <span class="metric-caption">Smart Campus Digital Core Online</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Student-to-Faculty Ratio</span>
+                    <div class="metric-value">3.6 : 1</div>
+                    <span class="metric-caption">11 Students across 3 Faculty Members</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Academic Departments</span>
+                    <div class="metric-value" th:text="${totalDepartments}">3</div>
+                    <span class="metric-caption">CSE, ECE, MECH Operational</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Curriculum Depth</span>
+                    <div class="metric-value" th:text="${totalSubjects}">6</div>
+                    <span class="metric-caption">Registered Semester Courses</span>
+                </div>
+            </section>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Departmental Enrollment & Academic Capacity</h2>
+                </div>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Department Code</th>
+                            <th>Enrolled Students</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="entry : ${studentsByDept}">
+                            <td><strong th:text="${entry.key}">CSE</strong></td>
+                            <td th:text="${entry.value + ' Enrolled'}">5</td>
+                            <td><span class="badge badge-success">Optimal</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

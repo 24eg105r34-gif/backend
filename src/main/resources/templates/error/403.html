@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .error-container {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .error-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 3rem 2rem;
+            max-width: 500px;
+            width: 100%;
+        }
+        .error-code {
+            font-family: var(--font-mono);
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--danger);
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="/" class="brand">
+                <div class="brand-icon">SC</div>
+                <span class="brand-title">Smart Campus Portal</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="error-container">
+        <div class="error-card">
+            <div class="error-code">403</div>
+            <h1 style="font-size: 1.5rem; margin-bottom: 0.75rem;">Access Forbidden</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                Oops! You don't have authorization or role permission to access this restricted campus route.
+            </p>
+            <a href="/" class="btn btn-primary" id="back-home-btn">BACK TO DASHBOARD</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Smart Campus Management System. Enterprise University Platform.</p>
+    </footer>
+</body>
+</html>

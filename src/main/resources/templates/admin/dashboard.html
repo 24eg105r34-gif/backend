@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Command Center &bull; NEXUS CAMPUS | Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: admin-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Campus Command Center')}"></div>
+
+        <main class="main-content">
+            <!-- Messages -->
+            <div th:if="${successMessage}" class="badge badge-success" style="display: flex; width: 100%; padding: 0.75rem 1rem; margin-bottom: 1.5rem; text-transform: none; border-radius: var(--radius-sm);" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="badge badge-danger" style="display: flex; width: 100%; padding: 0.75rem 1rem; margin-bottom: 1.5rem; text-transform: none; border-radius: var(--radius-sm);" th:text="${errorMessage}"></div>
+
+            <!-- Featured Hero Workspace: Campus Command Overview -->
+            <div class="featured-surface-dark" style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
+                    <div>
+                        <div class="hero-tagline">&bull; EXECUTIVE COMMAND &bull; ANURAG UNIVERSITY</div>
+                        <h1 class="hero-title">Institutional Operations Matrix</h1>
+                        <p class="hero-desc">
+                            Centralized orchestration across academic departments, student enrollment rosters, timetable conflict verification, and grievance redressal pipelines.
+                        </p>
+                    </div>
+
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <a href="/admin/timetable" class="btn btn-lime btn-sm">&#9719; Timetable Matrix</a>
+                        <a href="/admin/students" class="btn btn-dark-outline btn-sm">&#9684; Student Registry</a>
+                        <a href="/admin/complaints" class="btn btn-dark-outline btn-sm">&#9888; Grievance Center</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4-Column Metric Telemetry -->
+            <div class="command-grid-4">
+                <div class="stat-box highlight-lime">
+                    <div class="stat-label">TOTAL STUDENTS</div>
+                    <div class="stat-number" th:text="${totalStudents}">11</div>
+                    <div class="stat-trend" style="font-family: var(--font-mono); font-size: 0.675rem; color: var(--text-muted);">
+                        ACTIVE ENROLLMENTS
+                    </div>
+                </div>
+
+                <div class="stat-box highlight-blue">
+                    <div class="stat-label">FACULTY INSTRUCTORS</div>
+                    <div class="stat-number" th:text="${totalFaculty}">3</div>
+                    <div class="stat-trend" style="font-family: var(--font-mono); font-size: 0.675rem; color: var(--text-muted);">
+                        APPOINTED ACROSS DEPTS
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">CURRICULUM COURSES</div>
+                    <div class="stat-number" th:text="${totalSubjects}">6</div>
+                    <div class="stat-trend" style="font-family: var(--font-mono); font-size: 0.675rem; color: var(--text-muted);">
+                        ACTIVE SUBJECTS
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">PENDING GRIEVANCES</div>
+                    <div class="stat-number"
+                         th:style="${pendingComplaints > 0 ? 'color: var(--accent-amber);' : 'color: var(--graphite);'}"
+                         th:text="${pendingComplaints}">1</div>
+                    <div class="stat-trend">
+                        <span th:class="${pendingComplaints > 0 ? 'badge badge-warning' : 'badge badge-lime'}"
+                              th:text="${pendingComplaints > 0 ? 'AWAITING ACTION' : 'ALL RESOLVED'}">STATUS</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asymmetric Work Area -->
+            <div class="command-grid">
+                <!-- Left: Department Enrollment Matrix & Recent Grievances -->
+                <div style="display: flex; flex-direction: column; gap: 1.75rem;">
+                    <!-- Department Distribution -->
+                    <div class="nexus-card">
+                        <div class="nexus-card-header">
+                            <div class="nexus-card-title">
+                                <span style="color: var(--electric-lime); font-size: 1.1rem;">&#9633;</span>
+                                Departmental Enrollment Matrix
+                            </div>
+                            <a href="/admin/departments" class="btn btn-outline btn-sm">Manage Departments &rarr;</a>
+                        </div>
+                        <div class="nexus-card-body" style="padding: 0;">
+                            <div class="table-container" style="border: none; border-radius: 0;">
+                                <table class="nexus-table">
+                                    <thead>
+                                        <tr>
+                                            <th>DEPARTMENT</th>
+                                            <th>ENROLLED STUDENTS</th>
+                                            <th>DISTRIBUTION SHARE</th>
+                                            <th>STATUS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="entry : ${studentsByDept}">
+                                            <td>
+                                                <strong style="font-family: var(--font-display);" th:text="${entry.key}">CSE</strong>
+                                            </td>
+                                            <td style="font-family: var(--font-mono);" th:text="${entry.value + ' Students'}">5 Students</td>
+                                            <td>
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <div style="background: var(--border-light); border-radius: 999px; height: 6px; width: 140px; overflow: hidden;">
+                                                        <div style="background: var(--electric-lime); height: 100%; border-radius: 999px;"
+                                                             th:style="'width: ' + (${totalStudents > 0 ? (entry.value * 100.0 / totalStudents) : 0}) + '%;'"></div>
+                                                    </div>
+                                                    <span style="font-family: var(--font-mono); font-size: 0.725rem;"
+                                                          th:text="${totalStudents > 0 ? #numbers.formatDecimal((entry.value * 100.0 / totalStudents), 1, 1) + '%' : '0%'}">45%</span>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge badge-lime">SYNCHRONIZED</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Grievance Review -->
+                    <div class="nexus-card">
+                        <div class="nexus-card-header">
+                            <div class="nexus-card-title">
+                                <span style="color: var(--accent-rose); font-size: 1.1rem;">&#9888;</span>
+                                Grievance Redressal Feed
+                            </div>
+                            <a href="/admin/complaints" class="btn btn-outline btn-sm">Redressal Center &rarr;</a>
+                        </div>
+                        <div class="nexus-card-body" style="padding: 0;">
+                            <div class="table-container" style="border: none; border-radius: 0;">
+                                <table class="nexus-table">
+                                    <thead>
+                                        <tr>
+                                            <th>TICKET SUBJECT</th>
+                                            <th>CATEGORY</th>
+                                            <th>STATUS</th>
+                                            <th>ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:if="${#lists.isEmpty(recentComplaints)}">
+                                            <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem 1rem;">
+                                                No active grievance tickets. All student inquiries resolved.
+                                            </td>
+                                        </tr>
+                                        <tr th:each="c : ${recentComplaints}">
+                                            <td>
+                                                <strong th:text="${c.subject}">WiFi connectivity in library</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-dark" th:text="${c.category}">Infrastructure</span>
+                                            </td>
+                                            <td>
+                                                <span th:class="${c.status.name() == 'RESOLVED' ? 'badge badge-lime' : (c.status.name() == 'IN_PROGRESS' ? 'badge badge-blue' : 'badge badge-warning')}"
+                                                      th:text="${c.status}">PENDING</span>
+                                            </td>
+                                            <td>
+                                                <a th:href="@{/admin/complaints}" class="btn btn-outline btn-sm">Review &rarr;</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Conflict Engine Health & Events Monitor -->
+                <div style="display: flex; flex-direction: column; gap: 1.75rem;">
+                    <!-- Timetable Conflict Engine Card -->
+                    <div class="nexus-card">
+                        <div class="nexus-card-header">
+                            <div class="nexus-card-title">
+                                <span style="color: var(--electric-lime); font-size: 1.1rem;">&#9719;</span>
+                                Timetable Conflict Engine
+                            </div>
+                        </div>
+                        <div class="nexus-card-body">
+                            <div style="background: var(--graphite); color: var(--text-light); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-dark); margin-bottom: 1rem;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--electric-lime); text-transform: uppercase;">ENGINE STATUS</span>
+                                    <span class="badge badge-lime">VALIDATED</span>
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--text-light-muted); line-height: 1.5;">
+                                    Real-time instructor, classroom, and section overlap detection active. Zero scheduling collisions detected.
+                                </div>
+                            </div>
+                            <a href="/admin/timetable" class="btn btn-graphite btn-sm" style="width: 100%; justify-content: center;">
+                                Launch Timetable Matrix &rarr;
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Campus Events -->
+                    <div class="nexus-card">
+                        <div class="nexus-card-header">
+                            <div class="nexus-card-title">
+                                <span style="color: var(--digital-blue); font-size: 1.1rem;">&#9733;</span>
+                                Campus Events & Hackathons
+                            </div>
+                            <a href="/admin/events" class="btn btn-outline btn-sm">Manage &rarr;</a>
+                        </div>
+                        <div class="nexus-card-body" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div th:if="${#lists.isEmpty(upcomingEvents)}" style="color: var(--text-muted); font-size: 0.85rem;">
+                                No upcoming events scheduled.
+                            </div>
+                            <div th:each="e : ${upcomingEvents}" style="background: var(--warm-paper); border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.35rem;">
+                                    <strong style="font-size: 0.9rem;" th:text="${e.title}">AI Innovation Hackathon</strong>
+                                    <span class="badge badge-dark" th:text="${e.eventDate}">2026-10-30</span>
+                                </div>
+                                <div style="font-size: 0.775rem; color: var(--text-secondary); display: flex; justify-content: space-between; margin-top: 0.5rem;">
+                                    <span th:text="${e.location}">Auditorium</span>
+                                    <span style="font-family: var(--font-mono);" th:text="${e.registeredCount + ' / ' + e.capacity + ' Registered'}">42 / 100</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

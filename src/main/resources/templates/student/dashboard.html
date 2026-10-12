@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Campus Hub &bull; NEXUS CAMPUS | Student</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: student-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Student Personal Hub')}"></div>
+
+        <main class="main-content">
+            <!-- Messages -->
+            <div th:if="${successMessage}" class="badge badge-success" style="display: flex; width: 100%; padding: 0.75rem 1rem; margin-bottom: 1.5rem; text-transform: none; border-radius: var(--radius-sm);" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="badge badge-danger" style="display: flex; width: 100%; padding: 0.75rem 1rem; margin-bottom: 1.5rem; text-transform: none; border-radius: var(--radius-sm);" th:text="${errorMessage}"></div>
+
+            <!-- Attendance Shortage Safeguard Warning -->
+            <div th:if="${isAttendanceShortage}" class="badge badge-danger" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1rem 1.25rem; margin-bottom: 1.75rem; text-transform: none; border-radius: var(--radius-md); font-size: 0.85rem; background: var(--accent-rose-bg); border-color: var(--accent-rose);">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="font-size: 1.35rem;">&#9888;</span>
+                    <div>
+                        <strong style="color: #991B1B;">ATTENDANCE SHORTAGE SAFEGUARD TRIGGERED</strong>
+                        <div style="color: #7F1D1D; font-size: 0.8rem; margin-top: 0.2rem;">
+                            Your cumulative attendance is <strong th:text="${attendancePercentage + '%'}">40.0%</strong>, which is below the mandatory 75% threshold. Please meet your HOD or faculty counselor.
+                        </div>
+                    </div>
+                </div>
+                <a href="/student/attendance" class="btn btn-danger btn-sm">Inspect Log &rarr;</a>
+            </div>
+
+            <!-- Featured Hero Workspace: Student Dossier & Today Focus -->
+            <div class="featured-surface-dark" style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
+                    <div>
+                        <div class="hero-tagline">&bull; ACADEMIC HUB &bull; ENROLLED ACTIVE</div>
+                        <h1 class="hero-title" th:text="${'Welcome, ' + student.name}">Welcome, Rahul Verma</h1>
+                        <p class="hero-desc">
+                            <span style="color: var(--electric-lime); font-family: var(--font-mono); font-weight: 700;" th:text="${student.studentId}">STU-2026-001</span>
+                            &bull;
+                            <span th:text="${student.department.departmentCode + ' &bull; Year ' + student.year + ' &bull; Sem ' + student.semester + ' &bull; Section ' + student.section}">CSE &bull; Year 3 &bull; Sem 5</span>
+                        </p>
+                    </div>
+
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <a href="/student/timetable" class="btn btn-lime btn-sm">&#9719; Full Timetable</a>
+                        <a href="/student/complaints" class="btn btn-dark-outline btn-sm">&#9888; Raise Ticket</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4-Column Quick Telemetry -->
+            <div class="command-grid-4">
+                <!-- Attendance Gauge Stat -->
+                <div class="stat-box highlight-lime">
+                    <div class="stat-label">CUMULATIVE ATTENDANCE</div>
+                    <div class="stat-number"
+                         th:style="${isAttendanceShortage ? 'color: var(--accent-rose);' : 'color: #065F46;'}"
+                         th:text="${attendancePercentage + '%'}">86.0%</div>
+                    <div class="stat-trend">
+                        <span th:class="${isAttendanceShortage ? 'badge badge-danger' : 'badge badge-lime'}"
+                              th:text="${isAttendanceShortage ? 'SHORTAGE ALERT' : '75% CRITERIA MET'}">STATUS</span>
+                    </div>
+                </div>
+
+                <!-- Academic Average -->
+                <div class="stat-box highlight-blue">
+                    <div class="stat-label">ASSESSMENT AVERAGE</div>
+                    <div class="stat-number" th:text="${academicAverage + '%'}">88.3%</div>
+                    <div class="stat-trend" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.675rem;">
+                        MIDTERMS & INTERNALS
+                    </div>
+                </div>
+
+                <!-- Today Classes -->
+                <div class="stat-box">
+                    <div class="stat-label">TODAY'S LECTURES</div>
+                    <div class="stat-number" th:text="${#lists.size(todayClasses)}">3</div>
+                    <div class="stat-trend" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.675rem;">
+                        ROOM SESSIONS SCHEDULED
+                    </div>
+                </div>
+
+                <!-- Pending Coursework -->
+                <div class="stat-box">
+                    <div class="stat-label">PENDING ASSIGNMENTS</div>
+                    <div class="stat-number" th:text="${#lists.size(pendingAssignments)}">1</div>
+                    <div class="stat-trend" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.675rem;">
+                        ACTIVE DEADLINES
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asymmetric Work Area -->
+            <div class="command-grid">
+                <!-- Left: Today's Class Schedule & Coursework -->
+                <div style="display: flex; flex-direction: column; gap: 1.75rem;">
+                    <!-- Today's Schedule -->
+                    <div class="nexus-card">
+                        <div class="nexus-card-header">
+                            <div class="nexus-card-title">
+                                <span style="color: var(--electric-lime); font-size: 1.1rem;">&#9719;</span>
+                                Today's Scheduled Lectures
+                            </div>
+                            <a href="/student/timetable" class="btn btn-outline btn-sm">Weekly Matrix &rarr;</a>
+                        </div>
+                        <div class="nexus-card-body" style="padding: 0;">
+                            <div class="table-container" style="border: none; border-radius: 0;">
+                                <table class="nexus-table">
+                                    <thead>
+                                        <tr>
+                                            <th>TIMING</th>
+                                            <th>COURSE & SUBJECT</th>
+                                            <th>ROOM / HALL</th>
+                                            <th>FACULTY INSTRUCTOR</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:if="${#lists.isEmpty(todayClasses)}">
+                                            <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2.5rem 1rem;">
+                                                No lectures scheduled for today. Focus on coursework or laboratory revisions.
+                                            </td>
+                                        </tr>
+                                        <tr th:each="c : ${todayClasses}">
+                                            <td style="font-family: var(--font-mono); font-weight: 600; color: var(--graphite);" th:text="${c.startTime + ' - ' + c.endTime}">09:00 - 10:00</td>
+                                            <td>
+                                                <strong th:text="${c.subject.subjectCode}">CS501</strong> &bull;
+                                                <span th:text="${c.subject.subjectName}">Operating Systems</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-dark" th:text="${c.room}">LH-201</span>
+                                            </td>
+                                            <td th:text="${c.faculty.name}">Prof. Alok Sharma</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Coursework -->
+                    <div class="nexus-card">
+                        <div class="nexus-card-header">
+                            <div class="nexus-card-title">
+                                <span style="color: var(--digital-blue); font-size: 1.1rem;">&#128196;</span>
+                                Active Coursework & Submissions
+                            </div>
+                            <a href="/student/assignments" class="btn btn-outline btn-sm">View All &rarr;</a>
+                        </div>
+                        <div class="nexus-card-body" style="padding: 0;">
+                            <div class="table-container" style="border: none; border-radius: 0;">
+                                <table class="nexus-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ASSIGNMENT TITLE</th>
+                                            <th>COURSE</th>
+                                            <th>DEADLINE</th>
+                                            <th>MAX MARKS</th>
+                                            <th>ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:if="${#lists.isEmpty(pendingAssignments)}">
+                                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem 1rem;">
+                                                All coursework is currently up to date. No pending submissions.
+                                            </td>
+                                        </tr>
+                                        <tr th:each="a : ${pendingAssignments}">
+                                            <td>
+                                                <strong th:text="${a.title}">Process Scheduling Simulator</strong>
+                                            </td>
+                                            <td th:text="${a.subject.subjectCode}">CS501</td>
+                                            <td style="font-family: var(--font-mono); color: #991B1B;" th:text="${a.deadline}">2026-10-25</td>
+                                            <td style="font-family: var(--font-mono);" th:text="${a.maxMarks + ' pts'}">20 pts</td>
+                                            <td>
+                                                <a th:href="@{'/student/assignments/' + ${a.id}}" class="btn btn-lime btn-sm">Submit &rarr;</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Events & Campus Bulletins -->
+                <div style="display: flex; flex-direction: column; gap: 1.75rem;">
+                    <!-- Campus Events Discovery -->
+                    <div class="nexus-card">
+                        <div class="nexus-card-header">
+                            <div class="nexus-card-title">
+                                <span style="color: var(--accent-amber); font-size: 1.1rem;">&#9733;</span>
+                                Campus Events & Hackathons
+                            </div>
+                            <a href="/student/events" class="btn btn-outline btn-sm">Browse &rarr;</a>
+                        </div>
+                        <div class="nexus-card-body" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div th:if="${#lists.isEmpty(upcomingEvents)}" style="color: var(--text-muted); font-size: 0.85rem;">
+                                No upcoming events scheduled at this moment.
+                            </div>
+                            <div th:each="e : ${upcomingEvents}" style="background: var(--warm-paper); border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.35rem;">
+                                    <strong style="font-size: 0.9rem;" th:text="${e.title}">AI Innovation Hackathon</strong>
+                                    <span class="badge badge-dark" th:text="${e.eventDate}">2026-10-30</span>
+                                </div>
+                                <p style="font-size: 0.775rem; color: var(--text-secondary); margin-bottom: 0.65rem;" th:text="${e.location}">Auditorium Complex</p>
+                                <a th:href="@{/student/events}" class="btn btn-outline btn-sm" style="width: 100%;">View Details & Registration</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campus Notices -->
+                    <div class="nexus-card">
+                        <div class="nexus-card-header">
+                            <div class="nexus-card-title">
+                                <span style="color: var(--text-secondary); font-size: 1.1rem;">&#9873;</span>
+                                Institutional Notices
+                            </div>
+                            <a href="/student/notices" class="btn btn-outline btn-sm">All Notices &rarr;</a>
+                        </div>
+                        <div class="nexus-card-body" style="display: flex; flex-direction: column; gap: 0.85rem;">
+                            <div th:if="${#lists.isEmpty(recentNotices)}" style="color: var(--text-muted); font-size: 0.85rem;">
+                                No recent notices published.
+                            </div>
+                            <div th:each="n : ${recentNotices}" style="padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle);">
+                                <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem;">
+                                    <strong style="font-size: 0.825rem;" th:text="${n.title}">Midterm Assessment Guidelines</strong>
+                                    <span style="font-family: var(--font-mono); font-size: 0.675rem; color: var(--text-muted);" th:text="${n.publishedDate}">2026-10-12</span>
+                                </div>
+                                <p style="font-size: 0.775rem; color: var(--text-muted); margin-top: 0.2rem;" th:text="${#strings.abbreviate(n.description, 80)}">Assessment rules...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

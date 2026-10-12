@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration &bull; NEXUS CAMPUS | Intelligent Campus OS</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .split-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.25fr;
+            min-height: 100vh;
+            background: var(--warm-paper);
+        }
+
+        .split-art {
+            background-color: var(--graphite);
+            color: var(--text-light);
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            border-right: 1px solid var(--border-dark);
+        }
+
+        .split-art::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 70% 30%, rgba(197, 255, 87, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .split-form-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2.5rem;
+            background: var(--warm-paper);
+            overflow-y: auto;
+        }
+
+        .auth-form-card {
+            width: 100%;
+            max-width: 520px;
+            background: var(--surface-white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        @media (max-width: 960px) {
+            .split-layout {
+                grid-template-columns: 1fr;
+            }
+            .split-art {
+                display: none;
+            }
+            .split-form-panel {
+                padding: 2rem 1rem;
+            }
+            .auth-form-card {
+                padding: 2rem 1.5rem;
+            }
+            .form-grid-2, .form-grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="split-layout">
+        <!-- Left Side: Ambient Info -->
+        <div class="split-art">
+            <div>
+                <a href="/" class="brand-nexus">
+                    <div class="nexus-glyph"></div>
+                    <div class="nexus-title-wrap">
+                        <span class="nexus-brand-title">NEXUS CAMPUS</span>
+                        <span class="nexus-brand-desc">STUDENT ENROLLMENT</span>
+                    </div>
+                </a>
+            </div>
+
+            <div>
+                <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--electric-lime); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.75rem;">
+                    &bull; STUDENT ACADEMIC ONBOARDING
+                </div>
+                <h2 style="font-family: var(--font-display); font-size: 2.25rem; font-weight: 700; line-height: 1.15; color: #FFFFFF; margin-bottom: 1.25rem;">
+                    Create your student profile to access academic operations.
+                </h2>
+                <p style="font-size: 0.9rem; color: var(--text-light-muted); line-height: 1.6;">
+                    Connect to your semester assessments, personalized attendance monitors, conflict-checked weekly schedules, and campus events.
+                </p>
+            </div>
+
+            <div style="font-size: 0.75rem; color: var(--text-light-muted); font-family: var(--font-mono); border-top: 1px solid var(--border-dark); padding-top: 1.5rem;">
+                <span>ACCREDITATION: ANURAG UNIVERSITY</span>
+            </div>
+        </div>
+
+        <!-- Right Side: Registration Form -->
+        <div class="split-form-panel">
+            <div class="auth-form-card">
+                <div style="margin-bottom: 1.75rem;">
+                    <h1 style="font-family: var(--font-display); font-size: 1.65rem; font-weight: 700; color: var(--graphite); margin-bottom: 0.35rem;">
+                        Student Registration
+                    </h1>
+                    <p style="font-size: 0.825rem; color: var(--text-muted);">
+                        Enter your official academic details to create your Nexus account.
+                    </p>
+                </div>
+
+                <!-- Error Alert -->
+                <div th:if="${errorMessage}" class="badge badge-danger" style="display: flex; width: 100%; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 0.8rem; text-transform: none; border-radius: var(--radius-sm);" id="register-error-msg">
+                    <span th:text="${errorMessage}"></span>
+                </div>
+
+                <form th:action="@{/register}" method="post" id="register-form">
+                    <!-- Full Name -->
+                    <div class="form-group">
+                        <label class="form-label" for="reg-name">Full Name</label>
+                        <input type="text"
+                               id="reg-name"
+                               name="name"
+                               class="form-control"
+                               placeholder="e.g. Rahul Verma"
+                               required
+                               autofocus>
+                    </div>
+
+                    <!-- Student ID & Email -->
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="reg-id">Roll No / Student ID</label>
+                            <input type="text"
+                                   id="reg-id"
+                                   name="studentId"
+                                   class="form-control"
+                                   placeholder="e.g. 24EG105R55"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="reg-email">Campus Email</label>
+                            <input type="email"
+                                   id="reg-email"
+                                   name="email"
+                                   class="form-control"
+                                   placeholder="e.g. student@anurag.edu.in"
+                                   required>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Phone (Optional) -->
+                    <div class="form-group">
+                        <label class="form-label" for="reg-phone">Phone Number (Optional)</label>
+                        <input type="text"
+                               id="reg-phone"
+                               name="phone"
+                               class="form-control"
+                               placeholder="+91 98765 43210">
+                    </div>
+
+                    <!-- Department -->
+                    <div class="form-group">
+                        <label class="form-label" for="reg-dept">Academic Department</label>
+                        <select id="reg-dept" name="departmentId" class="form-control" required>
+                            <option value="" disabled selected>Select Department</option>
+                            <option th:each="dept : ${departments}"
+                                    th:value="${dept.id}"
+                                    th:text="${dept.departmentCode + ' — ' + dept.departmentName}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Year, Semester, Section -->
+                    <div class="form-grid-3">
+                        <div class="form-group">
+                            <label class="form-label" for="reg-year">Academic Year</label>
+                            <select id="reg-year" name="year" class="form-control" required>
+                                <option value="1">Year 1</option>
+                                <option value="2">Year 2</option>
+                                <option value="3" selected>Year 3</option>
+                                <option value="4">Year 4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="reg-sem">Semester</label>
+                            <select id="reg-sem" name="semester" class="form-control" required>
+                                <option value="1">Sem 1</option>
+                                <option value="2">Sem 2</option>
+                                <option value="3">Sem 3</option>
+                                <option value="4">Sem 4</option>
+                                <option value="5" selected>Sem 5</option>
+                                <option value="6">Sem 6</option>
+                                <option value="7">Sem 7</option>
+                                <option value="8">Sem 8</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="reg-sec">Section</label>
+                            <input type="text"
+                                   id="reg-sec"
+                                   name="section"
+                                   class="form-control"
+                                   placeholder="A"
+                                   value="A"
+                                   maxlength="2"
+                                   required>
+                        </div>
+                    </div>
+
+                    <!-- Passwords -->
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="reg-password">Password</label>
+                            <input type="password"
+                                   id="reg-password"
+                                   name="password"
+                                   class="form-control"
+                                   placeholder="Create password"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="reg-confirm">Confirm Password</label>
+                            <input type="password"
+                                   id="reg-confirm"
+                                   name="confirmPassword"
+                                   class="form-control"
+                                   placeholder="Re-enter password"
+                                   required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-graphite btn-lg" style="width: 100%; justify-content: center; margin-top: 0.5rem;" id="btn-submit-register">
+                        Complete Registration &rarr;
+                    </button>
+                </form>
+
+                <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-subtle); text-align: center; font-size: 0.825rem; color: var(--text-muted);">
+                    <span>Already enrolled?</span>
+                    <a th:href="@{/login}" style="color: var(--graphite); font-weight: 700; margin-left: 0.25rem;">Sign in here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Web SDK Integration -->
+    <script type="module" th:src="@{/js/firebase-config.js}"></script>
+</body>
+</html>

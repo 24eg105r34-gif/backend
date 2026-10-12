@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: admin-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Student Directory & Enrollment')}"></div>
+
+        <main class="content-body">
+            <div th:if="${successMessage}" class="alert-banner alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-banner alert-error" th:text="${errorMessage}"></div>
+
+            <!-- Enrollment Form -->
+            <div class="form-panel">
+                <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Enroll New Student</h2>
+                <form th:action="@{/admin/students/add}" method="post">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g. Maya Sharma" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Student Campus ID</label>
+                            <input type="text" name="studentId" class="form-control" placeholder="e.g. STU-2026-012" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email (Login Username)</label>
+                            <input type="email" name="email" class="form-control" placeholder="maya.cse@campus.edu" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone</label>
+                            <input type="text" name="phone" class="form-control" placeholder="+91 98765 00000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Department</label>
+                            <select name="departmentId" class="form-control" required>
+                                <option value="">Select Department</option>
+                                <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.departmentCode + ' - ' + d.departmentName}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Academic Year</label>
+                            <select name="year" class="form-control" required>
+                                <option value="1">Year 1</option>
+                                <option value="2">Year 2</option>
+                                <option value="3" selected>Year 3</option>
+                                <option value="4">Year 4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Semester</label>
+                            <select name="semester" class="form-control" required>
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3">Semester 3</option>
+                                <option value="4">Semester 4</option>
+                                <option value="5" selected>Semester 5</option>
+                                <option value="6">Semester 6</option>
+                                <option value="7">Semester 7</option>
+                                <option value="8">Semester 8</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Section</label>
+                            <select name="section" class="form-control" required>
+                                <option value="A">Section A</option>
+                                <option value="B">Section B</option>
+                                <option value="C">Section C</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.25rem;">
+                        <button type="submit" class="btn btn-primary">Enroll Student</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Filter & Search Toolbar -->
+            <div class="form-panel" style="padding: 1.25rem;">
+                <form th:action="@{/admin/students}" method="get" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+                    <div class="form-group" style="min-width: 180px;">
+                        <label class="form-label">Search Query</label>
+                        <input type="text" name="search" th:value="${searchQuery}" class="form-control" placeholder="Name, ID or Email">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Department</label>
+                        <select name="deptId" class="form-control">
+                            <option value="">All Departments</option>
+                            <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.departmentCode}" th:selected="${d.id == selectedDeptId}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Year</label>
+                        <select name="year" class="form-control">
+                            <option value="">All Years</option>
+                            <option value="1" th:selected="${selectedYear == 1}">Year 1</option>
+                            <option value="2" th:selected="${selectedYear == 2}">Year 2</option>
+                            <option value="3" th:selected="${selectedYear == 3}">Year 3</option>
+                            <option value="4" th:selected="${selectedYear == 4}">Year 4</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Section</label>
+                        <select name="section" class="form-control">
+                            <option value="">All Sections</option>
+                            <option value="A" th:selected="${selectedSection == 'A'}">Section A</option>
+                            <option value="B" th:selected="${selectedSection == 'B'}">Section B</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-outline">Apply Filters</button>
+                    <a href="/admin/students" class="btn btn-outline">Reset</a>
+                </form>
+            </div>
+
+            <!-- Student Records Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Enrolled Students (<span th:text="${#lists.size(students)}">0</span>)</h2>
+                </div>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Dept</th>
+                            <th>Year / Sem</th>
+                            <th>Sec</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="s : ${students}">
+                            <td style="font-family: var(--font-mono); font-weight: 600;" th:text="${s.studentId}">STU-001</td>
+                            <td th:text="${s.name}">Rahul Verma</td>
+                            <td th:text="${s.email}" style="color: var(--text-secondary);">rahul@campus.edu</td>
+                            <td><span class="badge badge-muted" th:text="${s.department.departmentCode}">CSE</span></td>
+                            <td th:text="'Y' + ${s.year} + ' / S' + ${s.semester}">Y3 / S5</td>
+                            <td th:text="${s.section}">A</td>
+                            <td>
+                                <form th:action="@{'/admin/students/delete/' + ${s.id}}" method="post" style="display:inline;" onsubmit="return confirm('Confirm deleting student?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

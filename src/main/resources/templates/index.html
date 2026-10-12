@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NEXUS CAMPUS — Intelligent Campus OS: Next-generation university platform connecting academics, attendance, and operations.">
+    <title>NEXUS CAMPUS — Intelligent Campus OS | Anurag University</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .landing-body {
+            background-color: var(--graphite);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .landing-nav {
+            padding: 1.25rem 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-dark);
+            background: rgba(17, 19, 21, 0.95);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-menu-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-light-muted);
+        }
+
+        .nav-menu-links a:hover {
+            color: var(--electric-lime);
+        }
+
+        /* Hero Section */
+        .landing-hero {
+            padding: 6rem 3rem 4.5rem;
+            max-width: 1380px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-headline {
+            font-family: var(--font-display);
+            font-size: 4.25rem;
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.035em;
+            color: #FFFFFF;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-headline span.highlight-lime {
+            color: var(--electric-lime);
+            text-shadow: 0 0 35px var(--electric-lime-glow);
+        }
+
+        .hero-subhead {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: var(--text-light-muted);
+            margin-bottom: 2.5rem;
+            max-width: 580px;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        /* Architectural Telemetry Box */
+        .telemetry-stage {
+            background: var(--charcoal);
+            border: 1px solid var(--border-dark);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-dark);
+        }
+
+        .telemetry-stage::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--electric-lime), transparent);
+        }
+
+        .telemetry-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .telemetry-title {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--electric-lime);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .telemetry-stat-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .telemetry-box {
+            background: var(--graphite);
+            border: 1px solid var(--border-dark);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+        }
+
+        .telemetry-num {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            line-height: 1;
+        }
+
+        .telemetry-label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-light-muted);
+            text-transform: uppercase;
+            margin-top: 0.35rem;
+        }
+
+        /* Live Operational Grid */
+        .landing-section {
+            padding: 5rem 3rem;
+            max-width: 1380px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section-header-editorial {
+            margin-bottom: 3.5rem;
+        }
+
+        .section-tag {
+            font-family: var(--font-mono);
+            font-size: 0.725rem;
+            color: var(--electric-lime);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title-large {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #FFFFFF;
+            line-height: 1.15;
+        }
+
+        /* Asymmetric Feature Cards */
+        .feature-asymmetric-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 1.75rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .feature-card-dark {
+            background: var(--charcoal);
+            border: 1px solid var(--border-dark);
+            border-radius: var(--radius-md);
+            padding: 2.25rem;
+            position: relative;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .feature-card-dark:hover {
+            border-color: var(--electric-lime);
+            transform: translateY(-2px);
+        }
+
+        .feature-card-title {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .feature-card-desc {
+            font-size: 0.9rem;
+            color: var(--text-light-muted);
+            line-height: 1.6;
+        }
+
+        /* Ecosystem Triad */
+        .triad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .role-portal-card {
+            background: var(--charcoal);
+            border: 1px solid var(--border-dark);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .role-badge-chip {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: var(--radius-xs);
+            margin-bottom: 1rem;
+            align-self: flex-start;
+        }
+
+        .role-admin-chip {
+            background: rgba(197, 255, 87, 0.15);
+            color: var(--electric-lime);
+            border: 1px solid rgba(197, 255, 87, 0.3);
+        }
+
+        .role-faculty-chip {
+            background: rgba(121, 175, 255, 0.15);
+            color: var(--digital-blue);
+            border: 1px solid rgba(121, 175, 255, 0.3);
+        }
+
+        .role-student-chip {
+            background: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            border: 1px solid var(--border-dark);
+        }
+
+        /* Footer */
+        .landing-footer {
+            border-top: 1px solid var(--border-dark);
+            padding: 3rem;
+            background: #0C0E10;
+            font-size: 0.8rem;
+            color: var(--text-light-muted);
+        }
+
+        .footer-content {
+            max-width: 1380px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .landing-hero {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+                padding: 4rem 1.5rem 3rem;
+            }
+            .hero-headline {
+                font-size: 3rem;
+            }
+            .feature-asymmetric-grid {
+                grid-template-columns: 1fr;
+            }
+            .triad-grid {
+                grid-template-columns: 1fr;
+            }
+            .landing-nav {
+                padding: 1rem 1.5rem;
+            }
+            .landing-section {
+                padding: 3rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="landing-body">
+
+    <!-- Global Command Navigation Header -->
+    <header class="landing-nav">
+        <a href="/" class="brand-nexus">
+            <div class="nexus-glyph"></div>
+            <div class="nexus-title-wrap">
+                <span class="nexus-brand-title">NEXUS CAMPUS</span>
+                <span class="nexus-brand-desc">INTELLIGENT CAMPUS OS</span>
+            </div>
+        </a>
+
+        <div class="nav-menu-links">
+            <a href="#architecture">Architecture</a>
+            <a href="#ecosystem">Ecosystem</a>
+            <a href="#operations">Telemetry</a>
+            <a href="/login" class="btn btn-lime btn-sm">Enter Portal &rarr;</a>
+        </div>
+    </header>
+
+    <!-- Cinematic Editorial Hero -->
+    <main>
+        <section class="landing-hero">
+            <div>
+                <div class="hero-tagline">&bull; NEXT-GENERATION UNIVERSITY PLATFORM</div>
+                <h1 class="hero-headline">
+                    Your Campus.<br>
+                    <span class="highlight-lime">Connected.</span>
+                </h1>
+                <p class="hero-subhead">
+                    An intelligent academic operating system engineered for Anurag University. Integrating zero-conflict timetable scheduling, automated 75% attendance safeguards, coursework workflows, and instant grievance redressal.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="/login" class="btn btn-lime btn-lg" id="btn-hero-login">
+                        Launch Campus OS &rarr;
+                    </a>
+                    <a href="/register" class="btn btn-dark-outline btn-lg" id="btn-hero-register">
+                        Self-Service Registration
+                    </a>
+                </div>
+            </div>
+
+            <!-- Architectural Telemetry Stage (Live Operational State) -->
+            <div class="telemetry-stage">
+                <div class="telemetry-header">
+                    <span class="telemetry-title">&#9679; LIVE CAMPUS TELEMETRY</span>
+                    <span class="status-beacon">
+                        <span class="status-beacon-dot"></span>
+                        ONLINE
+                    </span>
+                </div>
+
+                <div class="telemetry-stat-row">
+                    <div class="telemetry-box">
+                        <div class="telemetry-num" th:text="${totalStudents != null ? totalStudents : 11}">11</div>
+                        <div class="telemetry-label">Active Students</div>
+                    </div>
+                    <div class="telemetry-box">
+                        <div class="telemetry-num" th:text="${totalFaculty != null ? totalFaculty : 3}">3</div>
+                        <div class="telemetry-label">Faculty Instructors</div>
+                    </div>
+                </div>
+
+                <div class="telemetry-stat-row">
+                    <div class="telemetry-box">
+                        <div class="telemetry-num" th:text="${totalDepartments != null ? totalDepartments : 3}">3</div>
+                        <div class="telemetry-label">Academic Departments</div>
+                    </div>
+                    <div class="telemetry-box">
+                        <div class="telemetry-num" th:text="${upcomingEvents != null ? upcomingEvents : 2}">2</div>
+                        <div class="telemetry-label">Upcoming Events</div>
+                    </div>
+                </div>
+
+                <div style="background: var(--graphite); border: 1px solid var(--border-dark); border-radius: var(--radius-sm); padding: 0.85rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-light-muted); display: flex; justify-content: space-between; align-items: center;">
+                    <span>Security Engine: <strong>Spring Security 6 (BCrypt)</strong></span>
+                    <span style="color: var(--electric-lime);">READY</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Asymmetric Features Section -->
+        <section class="landing-section" id="architecture">
+            <div class="section-header-editorial">
+                <div class="section-tag">&bull; SYSTEM CAPABILITIES</div>
+                <h2 class="section-title-large">Engineered for Academic Precision</h2>
+            </div>
+
+            <div class="feature-asymmetric-grid">
+                <div class="feature-card-dark">
+                    <h3 class="feature-card-title">
+                        <span style="color: var(--electric-lime);">&#9719;</span>
+                        Intelligent Timetable Conflict Engine
+                    </h3>
+                    <p class="feature-card-desc">
+                        Defensive validation algorithms inspect room, instructor, and section schedules simultaneously. Eliminates double-booking and schedule collisions before classes are published.
+                    </p>
+                </div>
+
+                <div class="feature-card-dark">
+                    <h3 class="feature-card-title">
+                        <span style="color: var(--digital-blue);">&#9745;</span>
+                        Automated 75% Attendance Guard
+                    </h3>
+                    <p class="feature-card-desc">
+                        Calculates subject-wise counts in real-time. Instantly triggers visual warning badges and student notifications when attendance dips below mandatory academic thresholds.
+                    </p>
+                </div>
+            </div>
+
+            <div class="feature-asymmetric-grid" style="grid-template-columns: 1fr 1.4fr;">
+                <div class="feature-card-dark">
+                    <h3 class="feature-card-title">
+                        <span style="color: var(--accent-amber);">&#9888;</span>
+                        Grievance Redressal Center
+                    </h3>
+                    <p class="feature-card-desc">
+                        Transparent institutional support pipeline categorized across academic, hostel, and infrastructure sectors with lifecycle audit tracking.
+                    </p>
+                </div>
+
+                <div class="feature-card-dark">
+                    <h3 class="feature-card-title">
+                        <span style="color: var(--electric-lime);">&#128196;</span>
+                        Coursework & Submissions Pipeline
+                    </h3>
+                    <p class="feature-card-desc">
+                        Faculty publish assignments with digital deadlines and study materials; students submit online with instant status indicators and marks feedback.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Role Ecosystem Triad -->
+        <section class="landing-section" id="ecosystem" style="padding-top: 0;">
+            <div class="section-header-editorial">
+                <div class="section-tag">&bull; UNIFIED EXPERIENCE</div>
+                <h2 class="section-title-large">Tailored Workspaces for Every Role</h2>
+            </div>
+
+            <div class="triad-grid">
+                <!-- Admin -->
+                <div class="role-portal-card">
+                    <div>
+                        <span class="role-badge-chip role-admin-chip">ROLE_ADMIN</span>
+                        <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: #FFFFFF; margin-bottom: 0.75rem;">Campus Command Center</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-light-muted); line-height: 1.5; margin-bottom: 1.5rem;">
+                            Executive control over institutional departments, faculty directory, student enrollments, conflict resolution, and grievance adjudication.
+                        </p>
+                    </div>
+                    <a href="/login" class="btn btn-dark-outline btn-sm">Access Command &rarr;</a>
+                </div>
+
+                <!-- Faculty -->
+                <div class="role-portal-card">
+                    <div>
+                        <span class="role-badge-chip role-faculty-chip">ROLE_FACULTY</span>
+                        <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: #FFFFFF; margin-bottom: 0.75rem;">Teaching Workspace</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-light-muted); line-height: 1.5; margin-bottom: 1.5rem;">
+                            Task-focused interface to mark classroom attendance, grade midterm and internal assessments, post assignments, and upload lecture materials.
+                        </p>
+                    </div>
+                    <a href="/login" class="btn btn-dark-outline btn-sm">Access Workspace &rarr;</a>
+                </div>
+
+                <!-- Student -->
+                <div class="role-portal-card">
+                    <div>
+                        <span class="role-badge-chip role-student-chip">ROLE_STUDENT</span>
+                        <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: #FFFFFF; margin-bottom: 0.75rem;">Personal Academic Hub</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-light-muted); line-height: 1.5; margin-bottom: 1.5rem;">
+                            Personal schedule timeline, attendance threshold gauges, marksheet inspections, hackathon event passes, and notification inboxes.
+                        </p>
+                    </div>
+                    <a href="/login" class="btn btn-dark-outline btn-sm">Access Hub &rarr;</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <div class="footer-content">
+            <div class="brand-nexus">
+                <div class="nexus-glyph"></div>
+                <div>
+                    <strong style="color: #FFFFFF; font-family: var(--font-display);">NEXUS CAMPUS OS</strong>
+                    <div style="font-size: 0.75rem; color: var(--text-light-muted);">Anurag University Enterprise Platform</div>
+                </div>
+            </div>
+
+            <div>
+                <span>Lead Architect: <strong>Peddi Kalyan</strong> (24EG105R34)</span>
+            </div>
+
+            <div>
+                &copy; 2026 NEXUS CAMPUS &bull; All systems operational.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase Web SDK Integration -->
+    <script type="module" th:src="@{/js/firebase-config.js}"></script>
+</body>
+</html>

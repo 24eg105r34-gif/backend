@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Attendance Records | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: student-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Course Attendance Analytics')}"></div>
+
+        <main class="content-body">
+            <!-- Overall Shortage Warning Banner -->
+            <div th:if="${isShortage}" class="alert-banner alert-error" style="font-weight: 600;">
+                ⚠️ CRITICAL WARNING: Your overall attendance is <span th:text="${overallPercentage + '%'}">40.0%</span>.
+                University academic policy requires a minimum of 75% attendance to be eligible for end-semester examinations.
+            </div>
+
+            <!-- Overall Metric Header -->
+            <section class="metrics-row">
+                <div class="metric-card">
+                    <span class="metric-label">Overall Aggregate Attendance</span>
+                    <div class="metric-value"
+                         th:style="${isShortage ? 'color: var(--danger);' : 'color: var(--success);'}"
+                         th:text="${overallPercentage + '%'}">86.0%</div>
+                    <span class="metric-caption">Across All Registered Semester Courses</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Eligibility Status</span>
+                    <div class="metric-value"
+                         th:style="${isShortage ? 'color: var(--danger);' : 'color: var(--success);'}"
+                         th:text="${isShortage ? 'AT RISK' : 'ELIGIBLE'}">ELIGIBLE</div>
+                    <span class="metric-caption" th:text="${isShortage ? 'Attendance Shortage Warning Active' : 'Examination Hall Ticket Cleared'}">Cleared</span>
+                </div>
+            </section>
+
+            <!-- Subject-wise Attendance Breakdown Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Subject-Wise Attendance Breakdown</h2>
+                </div>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Subject Code</th>
+                            <th>Subject Title</th>
+                            <th>Total Classes</th>
+                            <th>Classes Present</th>
+                            <th>Classes Absent</th>
+                            <th>Attendance %</th>
+                            <th>Shortage Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(summaries)}">
+                            <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No attendance records found for your account.</td>
+                        </tr>
+                        <tr th:each="sum : ${summaries}">
+                            <td style="font-family: var(--font-mono); font-weight: 700;" th:text="${sum.subject.subjectCode}">CS501</td>
+                            <td th:text="${sum.subject.subjectName}">Operating Systems</td>
+                            <td th:text="${sum.totalClasses}">10</td>
+                            <td style="color: var(--success); font-weight: 600;" th:text="${sum.presentClasses}">8</td>
+                            <td style="color: var(--danger); font-weight: 600;" th:text="${sum.absentClasses}">2</td>
+                            <td>
+                                <strong th:text="${sum.percentage + '%'}"
+                                        th:style="${sum.percentage < 75.0 ? 'color: var(--danger);' : 'color: var(--success);'}">80.0%</strong>
+                            </td>
+                            <td>
+                                <span th:if="${sum.shortageWarning}" class="badge badge-danger">Shortage Warning (&lt; 75%)</span>
+                                <span th:unless="${sum.shortageWarning}" class="badge badge-success">Sufficient</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

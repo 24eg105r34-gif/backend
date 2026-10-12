@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Submissions | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: faculty-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Review & Grade Submissions')}"></div>
+
+        <main class="content-body">
+            <div th:if="${successMessage}" class="alert-banner alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-banner alert-error" th:text="${errorMessage}"></div>
+
+            <div class="form-panel" style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <span class="badge badge-muted" th:text="${assignment.subject.subjectCode + ' - ' + assignment.subject.subjectName}">CS501</span>
+                        <h2 style="font-size: 1.25rem; margin: 0.5rem 0;" th:text="${assignment.title}">Title</h2>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;" th:text="${assignment.description}">Description</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Maximum Marks:</span>
+                        <div style="font-size: 1.5rem; font-weight: 800;" th:text="${assignment.maxMarks}">25.0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submissions Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Student Submissions (<span th:text="${#lists.size(submissions)}">0</span>)</h2>
+                    <a href="/faculty/assignments" class="btn btn-outline btn-sm">&larr; Back to Assignments</a>
+                </div>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Student Name</th>
+                            <th>Submitted Date</th>
+                            <th>Submission Text / Notes</th>
+                            <th>Status</th>
+                            <th>Grading & Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(submissions)}">
+                            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No student submissions received yet.</td>
+                        </tr>
+                        <tr th:each="sub : ${submissions}">
+                            <td style="font-family: var(--font-mono); font-weight: 600;" th:text="${sub.student.studentId}">STU-001</td>
+                            <td th:text="${sub.student.name}">Rahul Verma</td>
+                            <td style="font-family: var(--font-mono);" th:text="${#temporals.format(sub.submissionDate, 'dd MMM yyyy, hh:mm a')}">Date</td>
+                            <td style="max-width: 250px;">
+                                <p style="font-size: 0.85rem;" th:text="${sub.submissionText}">Text...</p>
+                                <span th:if="${sub.filePath != null}" style="font-size: 0.75rem; color: var(--info);" th:text="'Attachment: ' + ${sub.filePath}">file.pdf</span>
+                            </td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${sub.status.name() == 'REVIEWED' ? 'badge-success' : (sub.status.name() == 'LATE' ? 'badge-danger' : 'badge-info')}"
+                                      th:text="${sub.status}">SUBMITTED</span>
+                            </td>
+                            <td style="min-width: 260px;">
+                                <form th:action="@{/faculty/assignments/grade}" method="post">
+                                    <input type="hidden" name="submissionId" th:value="${sub.id}">
+                                    <input type="hidden" name="assignmentId" th:value="${assignment.id}">
+                                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.4rem;">
+                                        <input type="number" step="0.5" min="0" th:max="${assignment.maxMarks}" name="marksObtained"
+                                               th:value="${sub.marksObtained}" class="form-control" style="width: 100px; padding: 0.35rem 0.5rem; font-size: 0.85rem;"
+                                               placeholder="Marks" required>
+                                        <span style="font-size: 0.8rem; color: var(--text-muted);" th:text="'/ ' + ${assignment.maxMarks}">/ 25.0</span>
+                                    </div>
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <input type="text" name="feedback" th:value="${sub.feedback}" class="form-control"
+                                               style="font-size: 0.8rem; padding: 0.35rem 0.5rem;" placeholder="Feedback remarks...">
+                                        <button type="submit" class="btn btn-primary btn-sm">Grade</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

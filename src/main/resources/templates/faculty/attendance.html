@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Class Attendance | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: faculty-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Class Attendance Logging')}"></div>
+
+        <main class="content-body">
+            <div th:if="${successMessage}" class="alert-banner alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-banner alert-error" th:text="${errorMessage}"></div>
+
+            <!-- Subject & Date Selector -->
+            <div class="form-panel" style="padding: 1.25rem;">
+                <form th:action="@{/faculty/attendance}" method="get" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+                    <div class="form-group" style="min-width: 250px;">
+                        <label class="form-label">Select Course / Subject</label>
+                        <select name="subjectId" class="form-control" onchange="this.form.submit()">
+                            <option th:each="s : ${subjects}" th:value="${s.id}" th:text="${s.subjectCode + ' - ' + s.subjectName}"
+                                    th:selected="${selectedSubject != null && s.id == selectedSubject.id}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Lecture Date</label>
+                        <input type="date" name="date" class="form-control" th:value="${selectedDate}" onchange="this.form.submit()">
+                    </div>
+                    <button type="submit" class="btn btn-outline">Load Student List</button>
+                </form>
+            </div>
+
+            <!-- Student Roll Call Attendance Form -->
+            <div class="table-container" th:if="${selectedSubject != null}">
+                <div class="table-header">
+                    <div>
+                        <h2 class="table-title" th:text="${selectedSubject.subjectCode + ' : ' + selectedSubject.subjectName}">CS501</h2>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);" th:text="'Date: ' + ${selectedDate} + ' | Dept: ' + ${selectedSubject.department.departmentCode}">Date</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="button" class="btn btn-outline btn-sm" onclick="setAllAttendance('PRESENT')">Mark All Present</button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="setAllAttendance('ABSENT')">Mark All Absent</button>
+                    </div>
+                </div>
+
+                <form th:action="@{/faculty/attendance/save}" method="post">
+                    <input type="hidden" name="subjectId" th:value="${selectedSubject.id}">
+                    <input type="hidden" name="date" th:value="${selectedDate}">
+
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Student Name</th>
+                                <th>Class & Section</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(students)}">
+                                <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">No students enrolled in this course department.</td>
+                            </tr>
+                            <tr th:each="s : ${students}">
+                                <td style="font-family: var(--font-mono); font-weight: 600;" th:text="${s.studentId}">STU-001</td>
+                                <td th:text="${s.name}">Rahul Verma</td>
+                                <td th:text="${s.department.departmentCode + ' Y' + s.year + ' Sec-' + s.section}">CSE Y3 Sec-A</td>
+                                <td>
+                                    <div style="display: flex; gap: 1.25rem; align-items: center;">
+                                        <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--success); font-weight: 600;">
+                                            <input type="radio" th:name="'student_status_' + ${s.id}" value="PRESENT" class="status-present"
+                                                   th:checked="${statusMap == null || statusMap[s.id] == null || statusMap[s.id].name() == 'PRESENT'}">
+                                            PRESENT
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--danger); font-weight: 600;">
+                                            <input type="radio" th:name="'student_status_' + ${s.id}" value="ABSENT" class="status-absent"
+                                                   th:checked="${statusMap != null && statusMap[s.id] != null && statusMap[s.id].name() == 'ABSENT'}">
+                                            ABSENT
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="padding: 1.25rem 1.5rem; border-top: 1px solid var(--border-color); background: var(--bg-secondary);">
+                        <button type="submit" class="btn btn-primary">Save Attendance Record</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+function setAllAttendance(status) {
+    const radioClass = status === 'PRESENT' ? '.status-present' : '.status-absent';
+    document.querySelectorAll(radioClass).forEach(r => r.checked = true);
+}
+</script>
+</body>
+</html>

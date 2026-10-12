@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assigned Subjects | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: faculty-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Assigned Courses & Subject Rosters')}"></div>
+
+        <main class="content-body">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">My Courses</h2>
+                </div>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Subject Name</th>
+                            <th>Credits</th>
+                            <th>Department</th>
+                            <th>Semester</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="s : ${subjects}">
+                            <td style="font-family: var(--font-mono); font-weight: 700;" th:text="${s.subjectCode}">CS501</td>
+                            <td th:text="${s.subjectName}">Operating Systems</td>
+                            <td th:text="${s.credits}">4</td>
+                            <td><span class="badge badge-muted" th:text="${s.department.departmentCode}">CSE</span></td>
+                            <td th:text="'Sem ' + ${s.semester}">Sem 5</td>
+                            <td>
+                                <a th:href="@{'/faculty/attendance?subjectId=' + ${s.id}}" class="btn btn-primary btn-sm">Mark Attendance</a>
+                                <a th:href="@{'/faculty/marks?subjectId=' + ${s.id}}" class="btn btn-outline btn-sm">Enter Marks</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

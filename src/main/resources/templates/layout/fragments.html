@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexus Fragments</title>
+</head>
+<body>
+
+    <!-- Sidebar Fragment for Admin -->
+    <aside th:fragment="admin-sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="/admin/dashboard" class="brand-nexus">
+                <div class="nexus-glyph"></div>
+                <div class="nexus-title-wrap">
+                    <span class="nexus-brand-title">NEXUS</span>
+                    <span class="nexus-brand-desc">CAMPUS OS</span>
+                </div>
+            </a>
+            <span class="role-pill">ADMIN</span>
+        </div>
+
+        <div class="sidebar-nav-section-title">COMMAND NAVIGATION</div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="sidebar-link" th:classappend="${activeNav == 'dashboard'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9638;</span>
+                    <span>Dashboard</span>
+                </div>
+            </a>
+            <a href="/admin/students" class="sidebar-link" th:classappend="${activeNav == 'students'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9684;</span>
+                    <span>Student Registry</span>
+                </div>
+            </a>
+            <a href="/admin/faculty" class="sidebar-link" th:classappend="${activeNav == 'faculty'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9671;</span>
+                    <span>Faculty Directory</span>
+                </div>
+            </a>
+            <a href="/admin/departments" class="sidebar-link" th:classappend="${activeNav == 'departments'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9633;</span>
+                    <span>Departments</span>
+                </div>
+            </a>
+            <a href="/admin/subjects" class="sidebar-link" th:classappend="${activeNav == 'subjects'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9670;</span>
+                    <span>Curriculum & Subjects</span>
+                </div>
+            </a>
+            <a href="/admin/timetable" class="sidebar-link" th:classappend="${activeNav == 'timetable'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9719;</span>
+                    <span>Timetable Matrix</span>
+                </div>
+            </a>
+            <a href="/admin/notices" class="sidebar-link" th:classappend="${activeNav == 'notices'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9873;</span>
+                    <span>Bulletins & Notices</span>
+                </div>
+            </a>
+            <a href="/admin/events" class="sidebar-link" th:classappend="${activeNav == 'events'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9733;</span>
+                    <span>Campus Events</span>
+                </div>
+            </a>
+            <a href="/admin/complaints" class="sidebar-link" th:classappend="${activeNav == 'complaints'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9888;</span>
+                    <span>Grievance Center</span>
+                </div>
+            </a>
+            <a href="/admin/reports" class="sidebar-link" th:classappend="${activeNav == 'reports'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9776;</span>
+                    <span>Reports & Audits</span>
+                </div>
+            </a>
+            <a href="/admin/notifications" class="sidebar-link" th:classappend="${activeNav == 'notifications'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#128276;</span>
+                    <span>Notifications</span>
+                </div>
+                <span th:if="${unreadNotificationCount != null && unreadNotificationCount > 0}" class="badge badge-lime" th:text="${unreadNotificationCount}">1</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-node">
+                <div class="user-avatar-node">AD</div>
+                <div style="min-width: 0;">
+                    <div class="user-meta-name" th:text="${currentUser != null ? currentUser.fullName : 'Administrator'}">Admin</div>
+                    <div class="user-meta-role">Campus Commander</div>
+                </div>
+            </div>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-dark-outline btn-sm" style="width: 100%;">Sign Out</button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Sidebar Fragment for Faculty -->
+    <aside th:fragment="faculty-sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="/faculty/dashboard" class="brand-nexus">
+                <div class="nexus-glyph"></div>
+                <div class="nexus-title-wrap">
+                    <span class="nexus-brand-title">NEXUS</span>
+                    <span class="nexus-brand-desc">FACULTY OS</span>
+                </div>
+            </a>
+            <span class="role-pill">FACULTY</span>
+        </div>
+
+        <div class="sidebar-nav-section-title">TEACHING WORKSPACE</div>
+        <nav class="sidebar-nav">
+            <a href="/faculty/dashboard" class="sidebar-link" th:classappend="${activeNav == 'dashboard'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9638;</span>
+                    <span>Command Hub</span>
+                </div>
+            </a>
+            <a href="/faculty/subjects" class="sidebar-link" th:classappend="${activeNav == 'subjects'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9670;</span>
+                    <span>My Courses</span>
+                </div>
+            </a>
+            <a href="/faculty/attendance" class="sidebar-link" th:classappend="${activeNav == 'attendance'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9745;</span>
+                    <span>Class Attendance</span>
+                </div>
+            </a>
+            <a href="/faculty/marks" class="sidebar-link" th:classappend="${activeNav == 'marks'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9998;</span>
+                    <span>Grading & Marks</span>
+                </div>
+            </a>
+            <a href="/faculty/assignments" class="sidebar-link" th:classappend="${activeNav == 'assignments'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#128196;</span>
+                    <span>Coursework</span>
+                </div>
+            </a>
+            <a href="/faculty/materials" class="sidebar-link" th:classappend="${activeNav == 'materials'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#128194;</span>
+                    <span>Study Materials</span>
+                </div>
+            </a>
+            <a href="/faculty/notices" class="sidebar-link" th:classappend="${activeNav == 'notices'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9873;</span>
+                    <span>Announcements</span>
+                </div>
+            </a>
+            <a href="/faculty/notifications" class="sidebar-link" th:classappend="${activeNav == 'notifications'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#128276;</span>
+                    <span>Notifications</span>
+                </div>
+                <span th:if="${unreadNotificationCount != null && unreadNotificationCount > 0}" class="badge badge-lime" th:text="${unreadNotificationCount}">1</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-node">
+                <div class="user-avatar-node">FC</div>
+                <div style="min-width: 0;">
+                    <div class="user-meta-name" th:text="${currentFaculty != null ? currentFaculty.name : 'Faculty Member'}">Prof. Sharma</div>
+                    <div class="user-meta-role" th:text="${currentFaculty != null ? currentFaculty.designation : 'Instructor'}">Professor</div>
+                </div>
+            </div>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-dark-outline btn-sm" style="width: 100%;">Sign Out</button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Sidebar Fragment for Student -->
+    <aside th:fragment="student-sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="/student/dashboard" class="brand-nexus">
+                <div class="nexus-glyph"></div>
+                <div class="nexus-title-wrap">
+                    <span class="nexus-brand-title">NEXUS</span>
+                    <span class="nexus-brand-desc">STUDENT HUB</span>
+                </div>
+            </a>
+            <span class="role-pill">STUDENT</span>
+        </div>
+
+        <div class="sidebar-nav-section-title">ACADEMIC HUB</div>
+        <nav class="sidebar-nav">
+            <a href="/student/dashboard" class="sidebar-link" th:classappend="${activeNav == 'dashboard'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9638;</span>
+                    <span>Personal Hub</span>
+                </div>
+            </a>
+            <a href="/student/profile" class="sidebar-link" th:classappend="${activeNav == 'profile'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9684;</span>
+                    <span>Student Dossier</span>
+                </div>
+            </a>
+            <a href="/student/attendance" class="sidebar-link" th:classappend="${activeNav == 'attendance'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9745;</span>
+                    <span>Attendance Monitor</span>
+                </div>
+            </a>
+            <a href="/student/marks" class="sidebar-link" th:classappend="${activeNav == 'marks'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9998;</span>
+                    <span>Assessment Scores</span>
+                </div>
+            </a>
+            <a href="/student/timetable" class="sidebar-link" th:classappend="${activeNav == 'timetable'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9719;</span>
+                    <span>Weekly Schedule</span>
+                </div>
+            </a>
+            <a href="/student/assignments" class="sidebar-link" th:classappend="${activeNav == 'assignments'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#128196;</span>
+                    <span>Assignments</span>
+                </div>
+            </a>
+            <a href="/student/materials" class="sidebar-link" th:classappend="${activeNav == 'materials'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#128194;</span>
+                    <span>Study Materials</span>
+                </div>
+            </a>
+            <a href="/student/notices" class="sidebar-link" th:classappend="${activeNav == 'notices'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9873;</span>
+                    <span>Campus Notices</span>
+                </div>
+            </a>
+            <a href="/student/events" class="sidebar-link" th:classappend="${activeNav == 'events'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9733;</span>
+                    <span>Event Registrations</span>
+                </div>
+            </a>
+            <a href="/student/complaints" class="sidebar-link" th:classappend="${activeNav == 'complaints'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#9888;</span>
+                    <span>Grievance Tickets</span>
+                </div>
+            </a>
+            <a href="/student/notifications" class="sidebar-link" th:classappend="${activeNav == 'notifications'} ? 'active'">
+                <div class="nav-link-meta">
+                    <span class="link-icon">&#128276;</span>
+                    <span>Notification Feed</span>
+                </div>
+                <span th:if="${unreadNotificationCount != null && unreadNotificationCount > 0}" class="badge badge-lime" th:text="${unreadNotificationCount}">1</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-node">
+                <div class="user-avatar-node">ST</div>
+                <div style="min-width: 0;">
+                    <div class="user-meta-name" th:text="${currentStudent != null ? currentStudent.name : 'Student'}">Rahul Verma</div>
+                    <div class="user-meta-role" th:text="${currentStudent != null ? currentStudent.studentId : 'STU-2026'}">STU-2026-001</div>
+                </div>
+            </div>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-dark-outline btn-sm" style="width: 100%;">Sign Out</button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Top Command Bar Fragment with Search Palette -->
+    <header th:fragment="topbar(title)" class="topbar-command">
+        <div class="topbar-left">
+            <h1 class="page-title" th:text="${title}">Command Hub</h1>
+            <div class="breadcrumb-trail">
+                <span>NEXUS</span>
+                <span>/</span>
+                <span th:text="${title}">Dashboard</span>
+            </div>
+        </div>
+
+        <div class="topbar-right">
+            <!-- Command Palette Quick Launcher -->
+            <button type="button" class="btn-cmd-palette" onclick="openCommandPalette()">
+                <span>&#128269;</span>
+                <span>Jump to module...</span>
+                <span class="kbd-shortcut">Ctrl K</span>
+            </button>
+
+            <!-- Live Status Beacon -->
+            <div class="status-beacon">
+                <span class="status-beacon-dot"></span>
+                <span>CORE ACTIVE</span>
+            </div>
+
+            <!-- Notifications Feed Link -->
+            <a th:href="${currentUser != null ? (currentUser.role.name() == 'ROLE_ADMIN' ? '/admin/notifications' : (currentUser.role.name() == 'ROLE_FACULTY' ? '/faculty/notifications' : '/student/notifications')) : '/login'}"
+               class="btn btn-outline btn-sm"
+               title="Notifications">
+                <span>&#128276;</span>
+                <span th:if="${unreadNotificationCount != null && unreadNotificationCount > 0}"
+                      class="badge badge-lime"
+                      th:text="${unreadNotificationCount}">1</span>
+            </a>
+
+            <!-- Quick Logout Button -->
+            <form th:action="@{/logout}" method="post" style="margin: 0;">
+                <button type="submit" class="btn btn-graphite btn-sm">Sign Out</button>
+            </form>
+        </div>
+
+        <!-- Global Command Palette Modal Fragment -->
+        <div id="command-palette-modal" class="command-palette-backdrop" onclick="handlePaletteBackdropClick(event)">
+            <div class="command-palette-card">
+                <div class="command-palette-input-wrap">
+                    <span style="color: var(--electric-lime); font-size: 1.1rem;">&#128269;</span>
+                    <input type="text"
+                           id="cmd-palette-input"
+                           class="command-palette-input"
+                           placeholder="Type to jump anywhere in NEXUS... (e.g. attendance, timetable)"
+                           oninput="filterCommandPalette()">
+                    <span class="kbd-shortcut" style="background: var(--charcoal); color: var(--text-light-muted); border-color: var(--border-dark);">ESC to close</span>
+                </div>
+                <div class="command-palette-results" id="cmd-palette-results">
+                    <div class="command-palette-item" onclick="navigateCommand('/student/dashboard')">
+                        <span>&#9638; Student Personal Hub</span>
+                        <span class="item-tag">PORTAL</span>
+                    </div>
+                    <div class="command-palette-item" onclick="navigateCommand('/student/attendance')">
+                        <span>&#9745; Attendance & 75% Threshold Monitor</span>
+                        <span class="item-tag">MODULE</span>
+                    </div>
+                    <div class="command-palette-item" onclick="navigateCommand('/student/timetable')">
+                        <span>&#9719; Weekly Academic Timetable</span>
+                        <span class="item-tag">SCHEDULE</span>
+                    </div>
+                    <div class="command-palette-item" onclick="navigateCommand('/student/marks')">
+                        <span>&#9998; Assessment Scores & Marksheet</span>
+                        <span class="item-tag">ACADEMIC</span>
+                    </div>
+                    <div class="command-palette-item" onclick="navigateCommand('/student/assignments')">
+                        <span>&#128196; Coursework & Submissions</span>
+                        <span class="item-tag">TASKS</span>
+                    </div>
+                    <div class="command-palette-item" onclick="navigateCommand('/student/events')">
+                        <span>&#9733; Campus Hackathons & Workshops</span>
+                        <span class="item-tag">EVENTS</span>
+                    </div>
+                    <div class="command-palette-item" onclick="navigateCommand('/student/complaints')">
+                        <span>&#9888; Grievance Redressal Center</span>
+                        <span class="item-tag">SUPPORT</span>
+                    </div>
+                    <div class="command-palette-item" onclick="navigateCommand('/admin/dashboard')">
+                        <span>&#9638; Admin Command Center</span>
+                        <span class="item-tag">ADMIN</span>
+                    </div>
+                    <div class="command-palette-item" onclick="navigateCommand('/faculty/dashboard')">
+                        <span>&#9638; Faculty Teaching Workspace</span>
+                        <span class="item-tag">FACULTY</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function openCommandPalette() {
+                const modal = document.getElementById('command-palette-modal');
+                if (modal) {
+                    modal.classList.add('active');
+                    const input = document.getElementById('cmd-palette-input');
+                    if (input) {
+                        input.value = '';
+                        input.focus();
+                        filterCommandPalette();
+                    }
+                }
+            }
+
+            function closeCommandPalette() {
+                const modal = document.getElementById('command-palette-modal');
+                if (modal) modal.classList.remove('active');
+            }
+
+            function handlePaletteBackdropClick(e) {
+                if (e.target.id === 'command-palette-modal') {
+                    closeCommandPalette();
+                }
+            }
+
+            function navigateCommand(url) {
+                window.location.href = url;
+            }
+
+            function filterCommandPalette() {
+                const q = (document.getElementById('cmd-palette-input').value || '').toLowerCase();
+                const items = document.querySelectorAll('.command-palette-item');
+                items.forEach(el => {
+                    const text = el.innerText.toLowerCase();
+                    el.style.display = text.includes(q) ? 'flex' : 'none';
+                });
+            }
+
+            // Keyboard shortcut Ctrl+K / Cmd+K and Esc
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+                    e.preventDefault();
+                    const modal = document.getElementById('command-palette-modal');
+                    if (modal && modal.classList.contains('active')) {
+                        closeCommandPalette();
+                    } else {
+                        openCommandPalette();
+                    }
+                } else if (e.key === 'Escape') {
+                    closeCommandPalette();
+                }
+            });
+        </script>
+    </header>
+
+</body>
+</html>

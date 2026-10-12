@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teaching Workspace &bull; NEXUS CAMPUS | Faculty</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: faculty-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Faculty Teaching Workspace')}"></div>
+
+        <main class="main-content">
+            <!-- Messages -->
+            <div th:if="${successMessage}" class="badge badge-success" style="display: flex; width: 100%; padding: 0.75rem 1rem; margin-bottom: 1.5rem; text-transform: none; border-radius: var(--radius-sm);" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="badge badge-danger" style="display: flex; width: 100%; padding: 0.75rem 1rem; margin-bottom: 1.5rem; text-transform: none; border-radius: var(--radius-sm);" th:text="${errorMessage}"></div>
+
+            <!-- Featured Hero Workspace: Faculty Command Header -->
+            <div class="featured-surface-dark" style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
+                    <div>
+                        <div class="hero-tagline">&bull; INSTRUCTIONAL OS &bull; FACULTY WORKSPACE</div>
+                        <h1 class="hero-title">Academic Teaching Hub</h1>
+                        <p class="hero-desc">
+                            Direct management of classroom attendance, assessment grading, student coursework submissions, and digital study resources.
+                        </p>
+                    </div>
+
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <a href="/faculty/attendance" class="btn btn-lime btn-sm">&#9745; Mark Attendance</a>
+                        <a href="/faculty/marks" class="btn btn-dark-outline btn-sm">&#9998; Enter Marks</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4-Column Metric Telemetry -->
+            <div class="command-grid-4">
+                <div class="stat-box highlight-lime">
+                    <div class="stat-label">ASSIGNED COURSES</div>
+                    <div class="stat-number" th:text="${totalAssignedSubjects}">3</div>
+                    <div class="stat-trend" style="font-family: var(--font-mono); font-size: 0.675rem; color: var(--text-muted);">
+                        SEMESTER CURRICULUM
+                    </div>
+                </div>
+
+                <div class="stat-box highlight-blue">
+                    <div class="stat-label">STUDENTS UNDER INSTRUCTION</div>
+                    <div class="stat-number" th:text="${totalStudents}">11</div>
+                    <div class="stat-trend" style="font-family: var(--font-mono); font-size: 0.675rem; color: var(--text-muted);">
+                        ACTIVE ENROLLMENTS
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">PENDING SUBMISSIONS</div>
+                    <div class="stat-number"
+                         th:style="${pendingSubmissions > 0 ? 'color: var(--accent-amber);' : 'color: var(--graphite);'}"
+                         th:text="${pendingSubmissions}">1</div>
+                    <div class="stat-trend">
+                        <span th:class="${pendingSubmissions > 0 ? 'badge badge-warning' : 'badge badge-lime'}"
+                              th:text="${pendingSubmissions > 0 ? 'NEEDS REVIEW' : 'ALL GRADED'}">STATUS</span>
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">TODAY'S SESSIONS</div>
+                    <div class="stat-number" th:text="${#lists.size(todayClasses)}">3</div>
+                    <div class="stat-trend" style="font-family: var(--font-mono); font-size: 0.675rem; color: var(--text-muted);">
+                        TIMETABLE SLOTS
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asymmetric Work Area -->
+            <div class="command-grid">
+                <!-- Left: Today's Teaching Schedule & Assigned Courses -->
+                <div style="display: flex; flex-direction: column; gap: 1.75rem;">
+                    <!-- Today's Classes -->
+                    <div class="nexus-card">
+                        <div class="nexus-card-header">
+                            <div class="nexus-card-title">
+                                <span style="color: var(--electric-lime); font-size: 1.1rem;">&#9719;</span>
+                                Today's Teaching Schedule
+                            </div>
+                            <a href="/faculty/attendance" class="btn btn-lime btn-sm">&#9745; Take Attendance Now</a>
+                        </div>
+                        <div class="nexus-card-body" style="padding: 0;">
+                            <div class="table-container" style="border: none; border-radius: 0;">
+                                <table class="nexus-table">
+                                    <thead>
+                                        <tr>
+                                            <th>TIME PERIOD</th>
+                                            <th>SUBJECT</th>
+                                            <th>VENUE</th>
+                                            <th>COHORT</th>
+                                            <th>ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:if="${#lists.isEmpty(todayClasses)}">
+                                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem 1rem;">
+                                                No lectures scheduled for today. Office hours and course revisions active.
+                                            </td>
+                                        </tr>
+                                        <tr th:each="c : ${todayClasses}">
+                                            <td style="font-family: var(--font-mono); font-weight: 600;" th:text="${c.startTime + ' - ' + c.endTime}">09:00 - 10:00</td>
+                                            <td>
+                                                <strong th:text="${c.subject.subjectCode}">CS501</strong> &bull;
+                                                <span th:text="${c.subject.subjectName}">Operating Systems</span>
+                                            </td>
+                                            <td><span class="badge badge-dark" th:text="${c.room}">LH-201</span></td>
+                                            <td th:text="${c.department.departmentCode + ' &bull; Sec-' + c.section}">CSE &bull; Sec-A</td>
+                                            <td>
+                                                <a th:href="@{/faculty/attendance(subjectId=${c.subject.id})}" class="btn btn-outline btn-sm">Take Roll &rarr;</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assigned Courses Roster -->
+                    <div class="nexus-card">
+                        <div class="nexus-card-header">
+                            <div class="nexus-card-title">
+                                <span style="color: var(--digital-blue); font-size: 1.1rem;">&#9670;</span>
+                                Assigned Courses & Subjects
+                            </div>
+                            <a href="/faculty/subjects" class="btn btn-outline btn-sm">Course Directory &rarr;</a>
+                        </div>
+                        <div class="nexus-card-body" style="padding: 0;">
+                            <div class="table-container" style="border: none; border-radius: 0;">
+                                <table class="nexus-table">
+                                    <thead>
+                                        <tr>
+                                            <th>CODE</th>
+                                            <th>COURSE TITLE</th>
+                                            <th>CREDITS</th>
+                                            <th>DEPARTMENT</th>
+                                            <th>ACTIONS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="s : ${assignedSubjects}">
+                                            <td style="font-family: var(--font-mono); font-weight: 700;" th:text="${s.subjectCode}">CS501</td>
+                                            <td th:text="${s.subjectName}">Operating Systems</td>
+                                            <td style="font-family: var(--font-mono);" th:text="${s.credits}">4</td>
+                                            <td th:text="${s.department.departmentCode}">CSE</td>
+                                            <td>
+                                                <div style="display: flex; gap: 0.4rem;">
+                                                    <a th:href="@{'/faculty/attendance?subjectId=' + ${s.id}}" class="btn btn-outline btn-sm">Roll</a>
+                                                    <a th:href="@{'/faculty/marks?subjectId=' + ${s.id}}" class="btn btn-outline btn-sm">Marks</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Quick Actions & Bulletins -->
+                <div style="display: flex; flex-direction: column; gap: 1.75rem;">
+                    <!-- Frequent Actions Panel -->
+                    <div class="nexus-card">
+                        <div class="nexus-card-header">
+                            <div class="nexus-card-title">
+                                <span style="color: var(--graphite); font-size: 1.1rem;">&#9881;</span>
+                                Instructor Quick Actions
+                            </div>
+                        </div>
+                        <div class="nexus-card-body" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <a href="/faculty/attendance" class="btn btn-lime btn-sm" style="width: 100%; justify-content: flex-start;">
+                                <span>&#9745;</span>
+                                <span>Record Daily Class Attendance</span>
+                            </a>
+                            <a href="/faculty/marks" class="btn btn-outline btn-sm" style="width: 100%; justify-content: flex-start;">
+                                <span>&#9998;</span>
+                                <span>Grade Assessment Scores</span>
+                            </a>
+                            <a href="/faculty/assignments" class="btn btn-outline btn-sm" style="width: 100%; justify-content: flex-start;">
+                                <span>&#128196;</span>
+                                <span>Publish New Assignment</span>
+                            </a>
+                            <a href="/faculty/materials" class="btn btn-outline btn-sm" style="width: 100%; justify-content: flex-start;">
+                                <span>&#128194;</span>
+                                <span>Upload Study Material / PDF</span>
+                            </a>
+                            <a href="/faculty/notices" class="btn btn-outline btn-sm" style="width: 100%; justify-content: flex-start;">
+                                <span>&#9873;</span>
+                                <span>Issue Course Announcement</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Announcements Feed -->
+                    <div class="nexus-card">
+                        <div class="nexus-card-header">
+                            <div class="nexus-card-title">
+                                <span style="color: var(--text-secondary); font-size: 1.1rem;">&#9873;</span>
+                                Institutional Bulletins
+                            </div>
+                            <a href="/faculty/notices" class="btn btn-outline btn-sm">All &rarr;</a>
+                        </div>
+                        <div class="nexus-card-body" style="display: flex; flex-direction: column; gap: 0.85rem;">
+                            <div th:if="${#lists.isEmpty(recentNotices)}" style="color: var(--text-muted); font-size: 0.85rem;">
+                                No recent notices published.
+                            </div>
+                            <div th:each="n : ${recentNotices}" style="padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle);">
+                                <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem;">
+                                    <strong style="font-size: 0.825rem;" th:text="${n.title}">Faculty Senate Meeting</strong>
+                                    <span style="font-family: var(--font-mono); font-size: 0.675rem; color: var(--text-muted);" th:text="${n.publishedDate}">2026-10-12</span>
+                                </div>
+                                <p style="font-size: 0.775rem; color: var(--text-muted); margin-top: 0.2rem;" th:text="${#strings.abbreviate(n.description, 80)}">Notice details...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

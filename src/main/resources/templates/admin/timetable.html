@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable Management | Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="app-layout">
+    <div th:replace="~{layout/fragments :: admin-sidebar}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{layout/fragments :: topbar('Timetable & Room Scheduling')}"></div>
+
+        <main class="content-body">
+            <div th:if="${successMessage}" class="alert-banner alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-banner alert-error" th:text="${errorMessage}"></div>
+
+            <!-- Create Timetable Slot -->
+            <div class="form-panel">
+                <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Schedule Lecture Slot</h2>
+                <form th:action="@{/admin/timetable/add}" method="post">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Day of Week</label>
+                            <select name="dayOfWeek" class="form-control" required>
+                                <option th:each="day : ${days}" th:value="${day}" th:text="${day}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Start Time</label>
+                            <input type="time" name="startTime" class="form-control" value="09:00" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">End Time</label>
+                            <input type="time" name="endTime" class="form-control" value="10:00" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Subject</label>
+                            <select name="subjectId" class="form-control" required>
+                                <option th:each="s : ${subjects}" th:value="${s.id}" th:text="${s.subjectCode + ' - ' + s.subjectName}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Faculty Instructor</label>
+                            <select name="facultyId" class="form-control" required>
+                                <option th:each="f : ${facultyList}" th:value="${f.id}" th:text="${f.name}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Room / Hall / Lab</label>
+                            <input type="text" name="room" class="form-control" placeholder="e.g. LH-201 or CS-Lab 2" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Department</label>
+                            <select name="departmentId" class="form-control" required>
+                                <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.departmentCode}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Year</label>
+                            <select name="year" class="form-control" required>
+                                <option value="1">Year 1</option>
+                                <option value="2">Year 2</option>
+                                <option value="3" selected>Year 3</option>
+                                <option value="4">Year 4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Section</label>
+                            <select name="section" class="form-control" required>
+                                <option value="A">Section A</option>
+                                <option value="B">Section B</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.25rem;">
+                        <button type="submit" class="btn btn-primary">Add Schedule Entry</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Timetable List Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Master Timetable Schedule</h2>
+                </div>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>Time Window</th>
+                            <th>Subject</th>
+                            <th>Instructor</th>
+                            <th>Room</th>
+                            <th>Class (Dept/Year/Sec)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="t : ${timetableEntries}">
+                            <td><strong th:text="${t.dayOfWeek}">MONDAY</strong></td>
+                            <td style="font-family: var(--font-mono);" th:text="${t.startTime + ' - ' + t.endTime}">09:00 - 10:00</td>
+                            <td th:text="${t.subject.subjectCode + ' (' + t.subject.subjectName + ')'}">CS501</td>
+                            <td th:text="${t.faculty.name}">Prof. Alok Sharma</td>
+                            <td><span class="badge badge-muted" th:text="${t.room}">LH-201</span></td>
+                            <td th:text="${t.department.departmentCode + ' Y' + t.year + ' Sec-' + t.section}">CSE Y3 Sec-A</td>
+                            <td>
+                                <form th:action="@{'/admin/timetable/delete/' + ${t.id}}" method="post" style="display:inline;" onsubmit="return confirm('Confirm deleting slot?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>
